@@ -1,8 +1,8 @@
-# Migration Guide: Moving to Smart Image
+# Migration Guide: Moving to Easy Image
 
-`smart_image` is designed to be a modern, lightweight, all-in-one replacement for existing Flutter image libraries like `cached_network_image` and `extended_image`.
+`easy_image` is designed to be a modern, lightweight, all-in-one replacement for existing Flutter image libraries like `cached_network_image` and `extended_image`.
 
-This guide outlines how to migrate your existing code to `SmartImage`.
+This guide outlines how to migrate your existing code to `EasyImage`.
 
 ---
 
@@ -19,9 +19,9 @@ CachedNetworkImage(
 )
 ```
 
-**After (`smart_image`):**
+**After (`easy_image`):**
 ```dart
-SmartImage(
+EasyImage(
   url: 'https://example.com/avatar.jpg',
   placeholder: CircularProgressIndicator(),
   errorWidget: Icon(Icons.error),
@@ -42,12 +42,12 @@ CachedNetworkImage(
 )
 ```
 
-**After (`smart_image`):**
+**After (`easy_image`):**
 ```dart
-SmartImage(
+EasyImage(
   url: 'https://api.example.com/photo.jpg',
   headers: {'Authorization': 'Bearer $token'},
-  config: SmartImageConfig(
+  config: EasyImageConfig(
     cacheManager: customCacheManager,
     includeHeadersInCacheKey: true, // Isolates cache per user token
   ),
@@ -64,16 +64,16 @@ await DefaultCacheManager().emptyCache();
 await DefaultCacheManager().removeFile('https://example.com/image.jpg');
 ```
 
-**After (`smart_image`):**
+**After (`easy_image`):**
 ```dart
 // Clear both memory and disk caches across the entire app
-await SmartImage.clearCache();
+await EasyImage.clearCache();
 
 // Clear specific image
-await SmartImage.clearImageCache('https://example.com/image.jpg');
+await EasyImage.clearImageCache('https://example.com/image.jpg');
 
 // Purge cache on account logout
-await SmartImage.clearCacheOnLogout();
+await EasyImage.clearCacheOnLogout();
 ```
 
 ---
@@ -91,16 +91,16 @@ ExtendedImage.network(
 )
 ```
 
-**After (`smart_image`):**
+**After (`easy_image`):**
 ```dart
 // Circular avatar:
-SmartImage.circle(
+EasyImage.circle(
   url: 'https://example.com/avatar.jpg',
   radius: 30,
 )
 
 // Rounded corners:
-SmartImage(
+EasyImage(
   url: 'https://example.com/avatar.jpg',
   radius: 20, // or borderRadius: BorderRadius.circular(20)
 )
@@ -119,14 +119,14 @@ ExtendedImage.memory(bytes);
 // Required separate flutter_svg setup for SVG
 ```
 
-**After (`smart_image`):**
+**After (`easy_image`):**
 ```dart
 // All sources handled by ONE unified widget with zero extra setup:
-SmartImage(url: 'https://example.com/img.jpg');
-SmartImage(asset: 'assets/img.png');
-SmartImage(file: File('/path/img.jpg'));
-SmartImage(bytes: bytes);
-SmartImage(base64: base64DataString);
+EasyImage(url: 'https://example.com/img.jpg');
+EasyImage(asset: 'assets/img.png');
+EasyImage(file: File('/path/img.jpg'));
+EasyImage(bytes: bytes);
+EasyImage(base64: base64DataString);
 // SVG vectors work automatically out of the box!
 ```
 
@@ -139,9 +139,9 @@ SmartImage(base64: base64DataString);
 // Required multiple wrapper packages
 ```
 
-**After (`smart_image`):**
+**After (`easy_image`):**
 ```dart
-SmartImage(
+EasyImage(
   url: 'https://example.com/photo.jpg',
   blurHash: 'L6PZfSi_.AyE_3t7t7R**0o#DgR4',
 )

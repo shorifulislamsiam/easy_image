@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../errors/smart_image_exception.dart';
+import '../errors/easy_image_exception.dart';
 
 /// Configuration options for image compression.
 @immutable
@@ -37,7 +37,7 @@ class ImageCompressionService {
     ImageCompressionOptions options = const ImageCompressionOptions(),
   }) async {
     if (kIsWeb) {
-      throw const SmartImageUnsupportedPlatformException(
+      throw const EasyImageUnsupportedPlatformException(
         'Native image compression is not supported on Flutter Web.',
         platform: 'web',
       );
@@ -59,7 +59,7 @@ class ImageCompressionService {
     ImageCompressionOptions options = const ImageCompressionOptions(),
   }) async {
     if (kIsWeb) {
-      throw const SmartImageUnsupportedPlatformException(
+      throw const EasyImageUnsupportedPlatformException(
         'File compression is not supported on Flutter Web.',
         platform: 'web',
       );
@@ -69,15 +69,15 @@ class ImageCompressionService {
       final dynamic f = file;
       final exists = await f.exists();
       if (!exists) {
-        throw SmartImageDecodeException(
+        throw EasyImageDecodeException(
             'File to compress does not exist: ${f.path}');
       }
 
       final Uint8List bytes = await f.readAsBytes();
       return await compressBytes(bytes, options: options);
     } catch (e) {
-      if (e is SmartImageException) rethrow;
-      throw SmartImageDecodeException(
+      if (e is EasyImageException) rethrow;
+      throw EasyImageDecodeException(
           'Failed to read file for compression: $e');
     }
   }

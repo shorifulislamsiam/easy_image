@@ -13,14 +13,14 @@ class DiskCacheIo implements DiskCacheAdapter {
     _initAttempted = true;
     try {
       final base = await getApplicationCacheDirectory();
-      final dir = io.Directory('${base.path}/smart_image_cache');
+      final dir = io.Directory('${base.path}/easy_image_cache');
       if (!await dir.exists()) {
         await dir.create(recursive: true);
       }
       _diskCacheDir = dir;
       return _diskCacheDir;
     } catch (e) {
-      debugPrint('⚠️ [SmartImage] Unable to initialize disk cache: $e');
+      debugPrint('⚠️ [EasyImage] Unable to initialize disk cache: $e');
       return null;
     }
   }
@@ -112,7 +112,7 @@ class DiskCacheIo implements DiskCacheAdapter {
         }
       }
     } catch (e) {
-      debugPrint('⚠️ [SmartImage] Disk LRU eviction error: $e');
+      debugPrint('⚠️ [EasyImage] Disk LRU eviction error: $e');
     }
   }
 

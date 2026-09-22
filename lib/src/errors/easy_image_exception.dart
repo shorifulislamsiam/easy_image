@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-/// Base sealed class for all exceptions thrown by the SmartImage package.
+/// Base sealed class for all exceptions thrown by the EasyImage package.
 @immutable
-sealed class SmartImageException implements Exception {
+sealed class EasyImageException implements Exception {
   /// A human-readable description of the error.
   final String message;
 
@@ -12,21 +12,21 @@ sealed class SmartImageException implements Exception {
   /// The stack trace associated with the error, if any.
   final StackTrace? stackTrace;
 
-  const SmartImageException(this.message, {this.cause, this.stackTrace});
+  const EasyImageException(this.message, {this.cause, this.stackTrace});
 
   @override
   String toString() => '$runtimeType: $message';
 }
 
 /// Thrown when a network request fails (e.g. non-2xx status code or connection failure).
-final class SmartImageNetworkException extends SmartImageException {
+final class EasyImageNetworkException extends EasyImageException {
   /// The HTTP status code, if available.
   final int? statusCode;
 
   /// The URL that failed.
   final String? url;
 
-  const SmartImageNetworkException(
+  const EasyImageNetworkException(
     super.message, {
     this.statusCode,
     this.url,
@@ -36,15 +36,15 @@ final class SmartImageNetworkException extends SmartImageException {
 
   @override
   String toString() =>
-      'SmartImageNetworkException: $message (status: $statusCode, url: $url)';
+      'EasyImageNetworkException: $message (status: $statusCode, url: $url)';
 }
 
 /// Thrown when an image download or processing operation times out.
-final class SmartImageTimeoutException extends SmartImageException {
+final class EasyImageTimeoutException extends EasyImageException {
   /// The duration that was exceeded.
   final Duration? timeout;
 
-  const SmartImageTimeoutException(
+  const EasyImageTimeoutException(
     super.message, {
     this.timeout,
     super.cause,
@@ -53,8 +53,8 @@ final class SmartImageTimeoutException extends SmartImageException {
 }
 
 /// Thrown when image bytes fail to decode or are corrupted.
-final class SmartImageDecodeException extends SmartImageException {
-  const SmartImageDecodeException(
+final class EasyImageDecodeException extends EasyImageException {
+  const EasyImageDecodeException(
     super.message, {
     super.cause,
     super.stackTrace,
@@ -62,11 +62,11 @@ final class SmartImageDecodeException extends SmartImageException {
 }
 
 /// Thrown when an image format is unsupported or cannot be recognized.
-final class SmartImageUnsupportedFormatException extends SmartImageException {
+final class EasyImageUnsupportedFormatException extends EasyImageException {
   /// The detected or declared format string (e.g. "image/tiff").
   final String? format;
 
-  const SmartImageUnsupportedFormatException(
+  const EasyImageUnsupportedFormatException(
     super.message, {
     this.format,
     super.cause,
@@ -76,11 +76,11 @@ final class SmartImageUnsupportedFormatException extends SmartImageException {
 
 /// Thrown when an operation is attempted on an unsupported platform
 /// (e.g. using `File` or native compression on Flutter Web).
-final class SmartImageUnsupportedPlatformException extends SmartImageException {
+final class EasyImageUnsupportedPlatformException extends EasyImageException {
   /// The name of the platform where the operation failed.
   final String platform;
 
-  const SmartImageUnsupportedPlatformException(
+  const EasyImageUnsupportedPlatformException(
     super.message, {
     required this.platform,
     super.cause,
@@ -89,11 +89,11 @@ final class SmartImageUnsupportedPlatformException extends SmartImageException {
 }
 
 /// Thrown when an optional dependency required for a feature is missing.
-final class SmartImageMissingDependencyException extends SmartImageException {
+final class EasyImageMissingDependencyException extends EasyImageException {
   /// The name of the missing package or dependency.
   final String dependency;
 
-  const SmartImageMissingDependencyException(
+  const EasyImageMissingDependencyException(
     super.message, {
     required this.dependency,
     super.cause,
@@ -102,14 +102,14 @@ final class SmartImageMissingDependencyException extends SmartImageException {
 }
 
 /// Thrown when a downloaded image exceeds the configured maximum byte size.
-final class SmartImageSizeLimitExceededException extends SmartImageException {
+final class EasyImageSizeLimitExceededException extends EasyImageException {
   /// The actual number of bytes received (or declared in Content-Length).
   final int actualBytes;
 
   /// The maximum allowed byte limit.
   final int maxBytes;
 
-  const SmartImageSizeLimitExceededException(
+  const EasyImageSizeLimitExceededException(
     super.message, {
     required this.actualBytes,
     required this.maxBytes,
@@ -119,15 +119,15 @@ final class SmartImageSizeLimitExceededException extends SmartImageException {
 
   @override
   String toString() =>
-      'SmartImageSizeLimitExceededException: $message (received: $actualBytes bytes, max: $maxBytes bytes)';
+      'EasyImageSizeLimitExceededException: $message (received: $actualBytes bytes, max: $maxBytes bytes)';
 }
 
 /// Thrown when a URL provided is malformed or has an invalid scheme.
-final class SmartImageInvalidUrlException extends SmartImageException {
+final class EasyImageInvalidUrlException extends EasyImageException {
   /// The invalid URL string.
   final String url;
 
-  const SmartImageInvalidUrlException(
+  const EasyImageInvalidUrlException(
     super.message, {
     required this.url,
     super.cause,
@@ -135,5 +135,16 @@ final class SmartImageInvalidUrlException extends SmartImageException {
   });
 
   @override
-  String toString() => 'SmartImageInvalidUrlException: $message (url: $url)';
+  String toString() => 'EasyImageInvalidUrlException: $message (url: $url)';
 }
+
+// Backwards compatibility aliases
+typedef SmartImageException = EasyImageException;
+typedef SmartImageNetworkException = EasyImageNetworkException;
+typedef SmartImageTimeoutException = EasyImageTimeoutException;
+typedef SmartImageDecodeException = EasyImageDecodeException;
+typedef SmartImageUnsupportedFormatException = EasyImageUnsupportedFormatException;
+typedef SmartImageUnsupportedPlatformException = EasyImageUnsupportedPlatformException;
+typedef SmartImageMissingDependencyException = EasyImageMissingDependencyException;
+typedef SmartImageSizeLimitExceededException = EasyImageSizeLimitExceededException;
+typedef SmartImageInvalidUrlException = EasyImageInvalidUrlException;

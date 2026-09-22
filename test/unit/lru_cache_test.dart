@@ -1,15 +1,15 @@
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/smart_image.dart';
+import 'package:easy_image/easy_image.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('SmartImageCacheService LRU Eviction', () {
+  group('EasyImageCacheService LRU Eviction', () {
     test('evicts oldest accessed items when memory quota is exceeded',
         () async {
       // Create cache service with a tight 100-byte memory limit
-      final lruCache = SmartImageCacheService(
+      final lruCache = EasyImageCacheService(
         maxMemoryCacheBytes: 100,
         maxDiskCacheBytes: 500,
       );
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('updates memory byte size on key overwrite', () async {
-      final lruCache = SmartImageCacheService(maxMemoryCacheBytes: 200);
+      final lruCache = EasyImageCacheService(maxMemoryCacheBytes: 200);
 
       await lruCache.put(key: 'key1', bytes: Uint8List(50));
       expect(lruCache.memoryByteCount, 50);

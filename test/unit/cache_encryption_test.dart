@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/smart_image.dart';
+import 'package:easy_image/easy_image.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Cache At-Rest Encryption', () {
     test('stores and retrieves encrypted entries seamlessly', () async {
-      final cacheService = SmartImageCacheService(
+      final cacheService = EasyImageCacheService(
         encryptCache: true,
         encryptionKey: 'my_secret_user_key',
       );

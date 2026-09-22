@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/smart_image.dart';
+import 'package:easy_image/easy_image.dart';
 
 // Minimal 1x1 transparent PNG bytes for testing
 final Uint8List kTestPngBytes = base64Decode(
@@ -18,12 +18,12 @@ void main() {
     ImageDownloadQueue.shared.clearQueue();
   });
 
-  group('SmartImage Widget Tests', () {
+  group('EasyImage Widget Tests', () {
     testWidgets('renders placeholder when loading', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               url: 'https://example.com/unresponsive.png',
               placeholder: const Text('Custom Loading...'),
             ),
@@ -38,7 +38,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               url: 'https://example.com/image.png',
               shimmer: true,
             ),
@@ -46,7 +46,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(SmartImageShimmer), findsOneWidget);
+      expect(find.byType(EasyImageShimmer), findsOneWidget);
     });
 
     testWidgets('renders static container when disableAnimations is true',
@@ -56,7 +56,7 @@ void main() {
           home: MediaQuery(
             data: const MediaQueryData(disableAnimations: true),
             child: Scaffold(
-              body: SmartImage(
+              body: EasyImage(
                 url: 'https://example.com/image.png',
                 shimmer: true,
               ),
@@ -65,7 +65,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(SmartImageShimmer), findsOneWidget);
+      expect(find.byType(EasyImageShimmer), findsOneWidget);
       // Under disableAnimations, AnimatedBuilder inside shimmer does not animate
     });
 
@@ -73,7 +73,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               url: 'ftp://bad-url.png',
               retryCount: 0,
               errorWidget: const Text('Failed to load'),
@@ -94,7 +94,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               url: '',
               width: 100,
               height: 100,
@@ -116,14 +116,14 @@ void main() {
 
     testWidgets('renders memory bytes image and triggers onLoadComplete',
         (tester) async {
-      SmartImageLoadInfo? completedInfo;
+      EasyImageLoadInfo? completedInfo;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               bytes: kTestPngBytes,
-              config: SmartImageConfig(
+              config: EasyImageConfig(
                 onLoadComplete: (info) {
                   completedInfo = info;
                 },
@@ -135,16 +135,16 @@ void main() {
 
       await tester.pumpAndSettle();
       expect(completedInfo, isNotNull);
-      expect(completedInfo!.cacheSource, SmartImageCacheSource.memory);
+      expect(completedInfo!.cacheSource, EasyImageCacheSource.memory);
       expect(find.byType(Image), findsOneWidget);
     });
 
-    testWidgets('applies circular clipping for SmartImage.circle',
+    testWidgets('applies circular clipping for EasyImage.circle',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage.circle(
+            body: EasyImage.circle(
               bytes: kTestPngBytes,
               radius: 40,
             ),
@@ -160,7 +160,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               bytes: kTestPngBytes,
               semanticLabel: 'User avatar thumbnail',
             ),

@@ -1,16 +1,16 @@
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/src/enums/smart_image_cache_source.dart';
+import 'package:easy_image/src/enums/easy_image_cache_source.dart';
 import 'package:easy_image/src/services/image_cache_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('SmartImageCacheService', () {
-    late SmartImageCacheService cacheService;
+  group('EasyImageCacheService', () {
+    late EasyImageCacheService cacheService;
 
     setUp(() {
-      cacheService = SmartImageCacheService.instance;
+      cacheService = EasyImageCacheService.instance;
     });
 
     tearDown(() async {
@@ -31,7 +31,7 @@ void main() {
       expect(result, isNotNull);
       expect(result!.bytes, bytes);
       expect(result.contentType, 'image/png');
-      expect(result.source, SmartImageCacheSource.memory);
+      expect(result.source, EasyImageCacheSource.memory);
       expect(result.isStale, isFalse);
     });
 

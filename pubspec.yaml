@@ -1,8 +1,8 @@
 name: easy_image
 description: A production-ready Flutter package providing a unified widget for image loading, caching, retry, multi-format rendering, and error handling.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/shorifulislamsiam/easy_image
-repository: https://github.com/shorifulislamsiam/easy_image
+repository: https://github.com/shorifulislamsiam/easy_image.git
 issue_tracker: https://github.com/shorifulislamsiam/easy_image/issues
 
 environment:

@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/src/errors/smart_image_exception.dart';
+import 'package:easy_image/src/errors/easy_image_exception.dart';
 import 'package:easy_image/src/services/image_retry_service.dart';
 
 void main() {
@@ -47,31 +47,31 @@ void main() {
     test('shouldRetry returns true for network and timeout errors only', () {
       expect(
         ImageRetryService.shouldRetry(
-          const SmartImageNetworkException('500 Server Error'),
+          const EasyImageNetworkException('500 Server Error'),
         ),
         isTrue,
       );
       expect(
         ImageRetryService.shouldRetry(
-          const SmartImageTimeoutException('Timeout'),
+          const EasyImageTimeoutException('Timeout'),
         ),
         isTrue,
       );
       expect(
         ImageRetryService.shouldRetry(
-          const SmartImageDecodeException('Corrupt bytes'),
+          const EasyImageDecodeException('Corrupt bytes'),
         ),
         isFalse,
       );
       expect(
         ImageRetryService.shouldRetry(
-          const SmartImageUnsupportedFormatException('tiff'),
+          const EasyImageUnsupportedFormatException('tiff'),
         ),
         isFalse,
       );
       expect(
         ImageRetryService.shouldRetry(
-          const SmartImageSizeLimitExceededException(
+          const EasyImageSizeLimitExceededException(
             'Too big',
             actualBytes: 100,
             maxBytes: 50,
@@ -89,7 +89,7 @@ void main() {
         operation: () async {
           attempts++;
           if (attempts < 3) {
-            throw const SmartImageNetworkException('Temporary network drop');
+            throw const EasyImageNetworkException('Temporary network drop');
           }
           return 'success!';
         },
@@ -106,10 +106,10 @@ void main() {
           baseDelay: const Duration(milliseconds: 10),
           operation: () async {
             attempts++;
-            throw const SmartImageNetworkException('Persistent error');
+            throw const EasyImageNetworkException('Persistent error');
           },
         ),
-        throwsA(isA<SmartImageNetworkException>()),
+        throwsA(isA<EasyImageNetworkException>()),
       );
       expect(attempts, 3); // initial attempt + 2 retries
     });

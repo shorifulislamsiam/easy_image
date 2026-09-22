@@ -53,13 +53,13 @@ class _DemoHomePageState extends State<DemoHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Easy Image Examples (v1.0.0)'),
+        title: const Text('Easy Image Examples (v1.0.2)'),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_sweep_outlined),
             tooltip: 'Clear Cache',
             onPressed: () async {
-              await SmartImage.clearCache();
+              await EasyImage.clearCache();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Image cache cleared!')),
@@ -74,7 +74,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
         children: [
           _buildSectionTitle('1. Basic Network Image with Fade-in'),
           const Center(
-            child: SmartImage(
+            child: EasyImage(
               url:
                   'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500',
               width: 280,
@@ -87,7 +87,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
           const SizedBox(height: 24),
           _buildSectionTitle('2. Circular Avatar'),
           const Center(
-            child: SmartImage.circle(
+            child: EasyImage.circle(
               url:
                   'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
               radius: 50,
@@ -97,7 +97,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
           const SizedBox(height: 24),
           _buildSectionTitle('3. SVG Vector Image (flutter_svg built-in)'),
           Center(
-            child: SmartImage(
+            child: EasyImage(
               bytes: Uint8List.fromList(utf8.encode(sampleSvgData)),
               width: 80,
               height: 80,
@@ -106,7 +106,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
           const SizedBox(height: 24),
           _buildSectionTitle('4. Memory Bytes Image'),
           Center(
-            child: SmartImage(
+            child: EasyImage(
               bytes: sampleMemoryPng,
               width: 100,
               height: 60,
@@ -116,7 +116,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
           const SizedBox(height: 24),
           _buildSectionTitle('5. Shimmer Loading State'),
           const Center(
-            child: SmartImage(
+            child: EasyImage(
               url: 'https://httpstat.us/200?sleep=10000',
               width: 240,
               height: 120,
@@ -127,7 +127,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
           const SizedBox(height: 24),
           _buildSectionTitle('6. BlurHash Progressive Placeholder'),
           const Center(
-            child: SmartImage(
+            child: EasyImage(
               url:
                   'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500',
               blurHash: 'L6PZfSi_.AyE_3t7t7R**0o#DgR4',
@@ -139,7 +139,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
           const SizedBox(height: 24),
           _buildSectionTitle('7. Error State with Retry Button'),
           Center(
-            child: SmartImage(
+            child: EasyImage(
               url: 'https://invalid-non-existent-domain.xyz/broken.png',
               width: 180,
               height: 120,
@@ -154,14 +154,14 @@ class _DemoHomePageState extends State<DemoHomePage> {
           Center(
             child: Column(
               children: [
-                SmartImage(
+                EasyImage(
                   url:
                       'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500',
                   width: 260,
                   height: 150,
                   radius: 12,
                   shimmer: true,
-                  config: SmartImageConfig(
+                  config: EasyImageConfig(
                     onCacheHit: (source) {
                       setState(() {
                         _lastCacheSource = source.name;
@@ -190,7 +190,7 @@ class _DemoHomePageState extends State<DemoHomePage> {
           _buildSectionTitle(
               '9. Authenticated Request with Header-Aware Cache Key'),
           const Center(
-            child: SmartImage(
+            child: EasyImage(
               url:
                   'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500',
               headers: {'Authorization': 'Bearer demo_session_token_123'},
@@ -203,13 +203,13 @@ class _DemoHomePageState extends State<DemoHomePage> {
           const SizedBox(height: 24),
           _buildSectionTitle('10. CDN URL Transformation'),
           Center(
-            child: SmartImage(
+            child: EasyImage(
               url:
                   'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
               width: 220,
               height: 130,
               radius: 12,
-              config: SmartImageConfig(
+              config: EasyImageConfig(
                 cdnTransform: (url, {width, height}) {
                   return '$url?w=${width ?? 300}&fit=crop';
                 },
@@ -220,13 +220,13 @@ class _DemoHomePageState extends State<DemoHomePage> {
           _buildSectionTitle(
               '11. Custom Max Bytes Guard (Oversized Rejection)'),
           Center(
-            child: SmartImage(
+            child: EasyImage(
               url:
                   'https://images.unsplash.com/photo-1579783902614-a3fb3927b675',
               width: 240,
               height: 120,
               radius: 12,
-              config: const SmartImageConfig(
+              config: const EasyImageConfig(
                 maxBytes: 100, // Very low limit to trigger size exception
               ),
               errorWidget: Container(

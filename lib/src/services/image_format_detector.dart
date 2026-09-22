@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import '../enums/smart_image_format.dart';
+import '../enums/easy_image_format.dart';
 
 /// Detects the image format using Content-Type headers, magic byte signatures,
 /// and URL/path file extensions as a last resort.
@@ -8,11 +8,11 @@ class ImageFormatDetector {
   /// Payload threshold above which byte sniffing is offloaded to a background isolate.
   static const int kComputeThresholdBytes = 50 * 1024; // 50 KB
 
-  /// Detects the [SmartImageFormat] using the priority:
+  /// Detects the [EasyImageFormat] using the priority:
   /// 1. Content-Type header (if non-generic)
   /// 2. Magic bytes file signature
   /// 3. File extension fallback
-  static SmartImageFormat detect({
+  static EasyImageFormat detect({
     String? contentType,
     Uint8List? bytes,
     String? pathOrUrl,
@@ -22,20 +22,20 @@ class ImageFormatDetector {
       final normalized = contentType.split(';').first.trim().toLowerCase();
       switch (normalized) {
         case 'image/png':
-          return SmartImageFormat.png;
+          return EasyImageFormat.png;
         case 'image/jpeg':
         case 'image/jpg':
-          return SmartImageFormat.jpeg;
+          return EasyImageFormat.jpeg;
         case 'image/webp':
-          return SmartImageFormat.webp;
+          return EasyImageFormat.webp;
         case 'image/gif':
-          return SmartImageFormat.gif;
+          return EasyImageFormat.gif;
         case 'image/bmp':
         case 'image/x-ms-bmp':
-          return SmartImageFormat.bmp;
+          return EasyImageFormat.bmp;
         case 'image/svg+xml':
         case 'image/svg':
-          return SmartImageFormat.svg;
+          return EasyImageFormat.svg;
         default:
           // If generic or octet-stream, fall through to magic bytes
           break;
@@ -45,7 +45,7 @@ class ImageFormatDetector {
     // 2. Magic bytes inspection
     if (bytes != null && bytes.isNotEmpty) {
       final magicFormat = detectFromBytes(bytes);
-      if (magicFormat != SmartImageFormat.unknown) {
+      if (magicFormat != EasyImageFormat.unknown) {
         return magicFormat;
       }
     }
@@ -53,16 +53,16 @@ class ImageFormatDetector {
     // 3. Fallback to extension
     if (pathOrUrl != null && pathOrUrl.trim().isNotEmpty) {
       final extFormat = detectFromExtension(pathOrUrl);
-      if (extFormat != SmartImageFormat.unknown) {
+      if (extFormat != EasyImageFormat.unknown) {
         return extFormat;
       }
     }
 
-    return SmartImageFormat.unknown;
+    return EasyImageFormat.unknown;
   }
 
   /// Asynchronously detects format, offloading to an isolate if bytes exceed [kComputeThresholdBytes].
-  static Future<SmartImageFormat> detectAsync({
+  static Future<EasyImageFormat> detectAsync({
     String? contentType,
     Uint8List? bytes,
     String? pathOrUrl,
@@ -70,7 +70,7 @@ class ImageFormatDetector {
     // If format is already obvious from Content-Type, resolve synchronously
     if (contentType != null && contentType.trim().isNotEmpty) {
       final syncResult = detect(contentType: contentType);
-      if (syncResult != SmartImageFormat.unknown) {
+      if (syncResult != EasyImageFormat.unknown) {
         return syncResult;
       }
     }
@@ -88,7 +88,7 @@ class ImageFormatDetector {
   }
 
   /// Sniffs the image format solely from raw bytes.
-  static SmartImageFormat detectFromBytes(Uint8List bytes) {
+  static EasyImageFormat detectFromBytes(Uint8List bytes) {
     if (bytes.length >= 8) {
       // PNG: 89 50 4E 47 0D 0A 1A 0A
       if (bytes[0] == 0x89 &&
@@ -99,14 +99,14 @@ class ImageFormatDetector {
           bytes[5] == 0x0A &&
           bytes[6] == 0x1A &&
           bytes[7] == 0x0A) {
-        return SmartImageFormat.png;
+        return EasyImageFormat.png;
       }
     }
 
     if (bytes.length >= 3) {
       // JPEG: FF D8 FF
       if (bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF) {
-        return SmartImageFormat.jpeg;
+        return EasyImageFormat.jpeg;
       }
     }
 
@@ -120,7 +120,7 @@ class ImageFormatDetector {
           bytes[9] == 0x45 &&
           bytes[10] == 0x42 &&
           bytes[11] == 0x50) {
-        return SmartImageFormat.webp;
+        return EasyImageFormat.webp;
       }
     }
 
@@ -132,14 +132,14 @@ class ImageFormatDetector {
           bytes[3] == 0x38 &&
           (bytes[4] == 0x37 || bytes[4] == 0x39) &&
           bytes[5] == 0x61) {
-        return SmartImageFormat.gif;
+        return EasyImageFormat.gif;
       }
     }
 
     if (bytes.length >= 2) {
       // BMP: BM (0x42 0x4D)
       if (bytes[0] == 0x42 && bytes[1] == 0x4D) {
-        return SmartImageFormat.bmp;
+        return EasyImageFormat.bmp;
       }
     }
 
@@ -154,26 +154,26 @@ class ImageFormatDetector {
           (sampleString.startsWith('<?xml') && sampleString.contains('<svg')) ||
           (sampleString.startsWith('<!doctype svg') ||
               sampleString.contains('<svg xmlns'))) {
-        return SmartImageFormat.svg;
+        return EasyImageFormat.svg;
       }
     }
 
-    return SmartImageFormat.unknown;
+    return EasyImageFormat.unknown;
   }
 
   /// Detects format from the URL or path string extension.
-  static SmartImageFormat detectFromExtension(String pathOrUrl) {
+  static EasyImageFormat detectFromExtension(String pathOrUrl) {
     final cleanPath = pathOrUrl.split('?').first.split('#').first.toLowerCase();
 
-    if (cleanPath.endsWith('.png')) return SmartImageFormat.png;
+    if (cleanPath.endsWith('.png')) return EasyImageFormat.png;
     if (cleanPath.endsWith('.jpg') || cleanPath.endsWith('.jpeg')) {
-      return SmartImageFormat.jpeg;
+      return EasyImageFormat.jpeg;
     }
-    if (cleanPath.endsWith('.webp')) return SmartImageFormat.webp;
-    if (cleanPath.endsWith('.gif')) return SmartImageFormat.gif;
-    if (cleanPath.endsWith('.bmp')) return SmartImageFormat.bmp;
-    if (cleanPath.endsWith('.svg')) return SmartImageFormat.svg;
+    if (cleanPath.endsWith('.webp')) return EasyImageFormat.webp;
+    if (cleanPath.endsWith('.gif')) return EasyImageFormat.gif;
+    if (cleanPath.endsWith('.bmp')) return EasyImageFormat.bmp;
+    if (cleanPath.endsWith('.svg')) return EasyImageFormat.svg;
 
-    return SmartImageFormat.unknown;
+    return EasyImageFormat.unknown;
   }
 }

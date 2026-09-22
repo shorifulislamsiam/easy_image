@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/smart_image.dart';
+import 'package:easy_image/easy_image.dart';
 
 final Uint8List kTestPngCustom = base64Decode(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
 );
 
-class _MockCustomCacheManager implements SmartImageCacheManager {
+class _MockCustomCacheManager implements EasyImageCacheManager {
   final Map<String, CachedImageResult> storage = {};
   int getCallCount = 0;
   int putCallCount = 0;
@@ -34,7 +34,7 @@ class _MockCustomCacheManager implements SmartImageCacheManager {
     storage[key] = CachedImageResult(
       bytes: bytes,
       contentType: contentType ?? 'image/png',
-      source: SmartImageCacheSource.memory,
+      source: EasyImageCacheSource.memory,
       eTag: eTag,
       lastModified: lastModified,
     );
@@ -69,14 +69,14 @@ void main() {
         contentType: 'image/png',
       );
 
-      SmartImageCacheSource? hitSource;
+      EasyImageCacheSource? hitSource;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               url: testUrl,
-              config: SmartImageConfig(
+              config: EasyImageConfig(
                 cacheManager: customManager,
                 onCacheHit: (source) {
                   hitSource = source;
@@ -90,7 +90,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(customManager.getCallCount, greaterThanOrEqualTo(1));
-      expect(hitSource, SmartImageCacheSource.memory);
+      expect(hitSource, EasyImageCacheSource.memory);
       expect(find.byType(Image), findsOneWidget);
     });
   });

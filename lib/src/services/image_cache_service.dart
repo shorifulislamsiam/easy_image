@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
-import '../enums/smart_image_cache_source.dart';
+import '../enums/easy_image_cache_source.dart';
 import 'disk_cache/disk_cache_adapter.dart';
 import 'image_cache_key.dart';
 import 'image_cache_manager.dart';
@@ -29,14 +29,14 @@ class _MemoryCacheEntry {
 }
 
 /// Production-ready two-tier caching service for images.
-class SmartImageCacheService implements SmartImageCacheManager {
-  static SmartImageCacheService _instance = SmartImageCacheService();
+class EasyImageCacheService implements EasyImageCacheManager {
+  static EasyImageCacheService _instance = EasyImageCacheService();
 
   /// Shared singleton instance.
-  static SmartImageCacheService get instance => _instance;
+  static EasyImageCacheService get instance => _instance;
 
   @visibleForTesting
-  static set instance(SmartImageCacheService custom) => _instance = custom;
+  static set instance(EasyImageCacheService custom) => _instance = custom;
 
   final Map<String, _MemoryCacheEntry> _memoryCache = {};
   int _currentMemoryBytes = 0;
@@ -54,7 +54,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
   /// Optional custom secret key for encryption.
   String? encryptionKey;
 
-  SmartImageCacheService({
+  EasyImageCacheService({
     this.maxMemoryCacheBytes = 50 * 1024 * 1024,
     this.maxDiskCacheBytes = 250 * 1024 * 1024,
     this.encryptCache = false,
@@ -110,7 +110,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
       return CachedImageResult(
         bytes: memEntry.bytes,
         contentType: memEntry.contentType,
-        source: SmartImageCacheSource.memory,
+        source: EasyImageCacheSource.memory,
         eTag: memEntry.eTag,
         lastModified: memEntry.lastModified,
         expiresAt: memEntry.expiresAt,
@@ -129,7 +129,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
           final meta = jsonDecode(metaContent) as Map<String, dynamic>;
           final isEncrypted = meta['isEncrypted'] as bool? ?? false;
           final bytes = isEncrypted
-              ? _cipher(rawBytes, encryptionKey ?? 'smart_image_default_key')
+              ? _cipher(rawBytes, encryptionKey ?? 'easy_image_default_key')
               : rawBytes;
 
           final contentType = meta['contentType'] as String?;
@@ -164,7 +164,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
           return CachedImageResult(
             bytes: bytes,
             contentType: contentType,
-            source: SmartImageCacheSource.disk,
+            source: EasyImageCacheSource.disk,
             eTag: eTag,
             lastModified: lastModified,
             expiresAt: expiresAt,
@@ -172,7 +172,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
           );
         }
       } catch (e) {
-        debugPrint('⚠️ [SmartImage] Disk cache read error: $e');
+        debugPrint('⚠️ [EasyImage] Disk cache read error: $e');
       }
     }
 
@@ -215,7 +215,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
       try {
         final filename = ImageCacheKey.toFilename(key);
         final diskBytes = encryptCache
-            ? _cipher(bytes, encryptionKey ?? 'smart_image_default_key')
+            ? _cipher(bytes, encryptionKey ?? 'easy_image_default_key')
             : bytes;
 
         final meta = {
@@ -233,7 +233,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
         await _diskCache.write(filename, diskBytes, jsonEncode(meta));
         _diskCache.evictLru(maxDiskCacheBytes);
       } catch (e) {
-        debugPrint('⚠️ [SmartImage] Disk cache write error: $e');
+        debugPrint('⚠️ [EasyImage] Disk cache write error: $e');
       }
     }
   }
@@ -314,7 +314,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
         final filename = ImageCacheKey.toFilename(key);
         await _diskCache.delete(filename);
       } catch (e) {
-        debugPrint('⚠️ [SmartImage] Clear image error: $e');
+        debugPrint('⚠️ [EasyImage] Clear image error: $e');
       }
     }
   }
@@ -328,7 +328,7 @@ class SmartImageCacheService implements SmartImageCacheManager {
       try {
         await _diskCache.clearAll();
       } catch (e) {
-        debugPrint('⚠️ [SmartImage] Clear all error: $e');
+        debugPrint('⚠️ [EasyImage] Clear all error: $e');
       }
     }
   }
@@ -338,3 +338,6 @@ class SmartImageCacheService implements SmartImageCacheManager {
     await clearAll();
   }
 }
+
+/// Backwards compatibility alias for [EasyImageCacheService].
+typedef SmartImageCacheService = EasyImageCacheService;

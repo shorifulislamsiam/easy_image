@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../errors/smart_image_exception.dart';
+import '../errors/easy_image_exception.dart';
 
 /// Item in the download queue.
 class _QueueItem<T> {
@@ -40,7 +40,7 @@ class ImageDownloadQueue {
   }) {
     if (isCancelled?.call() == true) {
       return Future.error(
-        const SmartImageTimeoutException('Download cancelled before queueing.'),
+        const EasyImageTimeoutException('Download cancelled before queueing.'),
       );
     }
 
@@ -67,7 +67,7 @@ class ImageDownloadQueue {
     if (item.isCancelled?.call() == true) {
       if (!item.completer.isCompleted) {
         item.completer.completeError(
-          const SmartImageTimeoutException('Download cancelled in queue.'),
+          const EasyImageTimeoutException('Download cancelled in queue.'),
         );
       }
       _processNext();
@@ -100,7 +100,7 @@ class ImageDownloadQueue {
     for (final item in _queue) {
       if (!item.completer.isCompleted) {
         item.completer.completeError(
-          const SmartImageTimeoutException('Queue cleared.'),
+          const EasyImageTimeoutException('Queue cleared.'),
         );
       }
     }

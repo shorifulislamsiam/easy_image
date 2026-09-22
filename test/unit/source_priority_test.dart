@@ -1,41 +1,41 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/src/errors/smart_image_exception.dart';
-import 'package:easy_image/src/models/smart_image_source.dart';
+import 'package:easy_image/src/errors/easy_image_exception.dart';
+import 'package:easy_image/src/models/easy_image_source.dart';
 
 void main() {
-  group('SmartImageSourceResolver', () {
+  group('EasyImageSourceResolver', () {
     test('returns null when no sources are provided', () {
-      final source = SmartImageSourceResolver.resolve();
+      final source = EasyImageSourceResolver.resolve();
       expect(source, isNull);
     });
 
     test('resolves url as network source', () {
-      final source = SmartImageSourceResolver.resolve(
+      final source = EasyImageSourceResolver.resolve(
         url: 'https://example.com/image.png',
       );
       expect(source, isNotNull);
-      expect(source!.type, SmartImageSourceType.network);
+      expect(source!.type, EasyImageSourceType.network);
       expect(source.stringData, 'https://example.com/image.png');
     });
 
     test('resolves asset as asset source', () {
-      final source = SmartImageSourceResolver.resolve(
+      final source = EasyImageSourceResolver.resolve(
         asset: 'assets/images/logo.png',
       );
       expect(source, isNotNull);
-      expect(source!.type, SmartImageSourceType.asset);
+      expect(source!.type, EasyImageSourceType.asset);
       expect(source.stringData, 'assets/images/logo.png');
     });
 
     test('resolves bytes as bytes source', () {
       final testBytes = Uint8List.fromList([1, 2, 3, 4]);
-      final source = SmartImageSourceResolver.resolve(
+      final source = EasyImageSourceResolver.resolve(
         bytes: testBytes,
       );
       expect(source, isNotNull);
-      expect(source!.type, SmartImageSourceType.bytes);
+      expect(source!.type, EasyImageSourceType.bytes);
       expect(source.byteData, testBytes);
     });
 
@@ -44,21 +44,21 @@ void main() {
       final encoded = base64Encode(utf8.encode(raw));
       final dataUri = 'data:image/png;base64,$encoded';
 
-      final source = SmartImageSourceResolver.resolve(base64: dataUri);
+      final source = EasyImageSourceResolver.resolve(base64: dataUri);
       expect(source, isNotNull);
-      expect(source!.type, SmartImageSourceType.bytes);
+      expect(source!.type, EasyImageSourceType.bytes);
       expect(utf8.decode(source.byteData!), raw);
     });
 
-    test('throws SmartImageDecodeException on invalid base64 string', () {
+    test('throws EasyImageDecodeException on invalid base64 string', () {
       expect(
-        () => SmartImageSourceResolver.resolve(base64: '%%%invalid-base64%%%'),
-        throwsA(isA<SmartImageDecodeException>()),
+        () => EasyImageSourceResolver.resolve(base64: '%%%invalid-base64%%%'),
+        throwsA(isA<EasyImageDecodeException>()),
       );
     });
 
     test('prioritizes darkUrl when isDarkMode is true', () {
-      final source = SmartImageSourceResolver.resolve(
+      final source = EasyImageSourceResolver.resolve(
         url: 'https://example.com/light.png',
         darkUrl: 'https://example.com/dark.png',
         isDarkMode: true,
@@ -67,7 +67,7 @@ void main() {
     });
 
     test('uses url when isDarkMode is false even if darkUrl is provided', () {
-      final source = SmartImageSourceResolver.resolve(
+      final source = EasyImageSourceResolver.resolve(
         url: 'https://example.com/light.png',
         darkUrl: 'https://example.com/dark.png',
         isDarkMode: false,
@@ -76,21 +76,21 @@ void main() {
     });
 
     test('prioritizes url over asset, file, bytes, and base64', () {
-      final source = SmartImageSourceResolver.resolve(
+      final source = EasyImageSourceResolver.resolve(
         url: 'https://example.com/primary.png',
         asset: 'assets/ignored.png',
         bytes: Uint8List.fromList([1, 2]),
       );
-      expect(source!.type, SmartImageSourceType.network);
+      expect(source!.type, EasyImageSourceType.network);
       expect(source.stringData, 'https://example.com/primary.png');
     });
 
     test('prioritizes asset over bytes and base64', () {
-      final source = SmartImageSourceResolver.resolve(
+      final source = EasyImageSourceResolver.resolve(
         asset: 'assets/primary.png',
         bytes: Uint8List.fromList([1, 2]),
       );
-      expect(source!.type, SmartImageSourceType.asset);
+      expect(source!.type, EasyImageSourceType.asset);
       expect(source.stringData, 'assets/primary.png');
     });
   });

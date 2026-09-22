@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../errors/smart_image_exception.dart';
+import '../errors/easy_image_exception.dart';
 
 /// Clean default error widget with optional retry button.
-class SmartImageError extends StatelessWidget {
-  final SmartImageException? error;
+class EasyImageError extends StatelessWidget {
+  final EasyImageException? error;
   final Widget? customErrorWidget;
   final VoidCallback? onRetry;
   final double? width;
@@ -11,7 +11,7 @@ class SmartImageError extends StatelessWidget {
   final BorderRadius? borderRadius;
   final Color? backgroundColor;
 
-  const SmartImageError({
+  const EasyImageError({
     super.key,
     this.error,
     this.customErrorWidget,
@@ -92,3 +92,6 @@ class SmartImageError extends StatelessWidget {
     );
   }
 }
+
+/// Backwards compatibility alias for [EasyImageError].
+typedef SmartImageError = EasyImageError;

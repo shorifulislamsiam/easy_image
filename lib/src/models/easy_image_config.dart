@@ -1,41 +1,41 @@
 import 'package:flutter/foundation.dart';
-import '../enums/smart_image_cache_source.dart';
-import '../errors/smart_image_exception.dart';
+import '../enums/easy_image_cache_source.dart';
+import '../errors/easy_image_exception.dart';
 import '../services/image_cache_manager.dart';
 
 /// Callback signature for image load start.
-typedef SmartImageLoadStartCallback = void Function();
+typedef EasyImageLoadStartCallback = void Function();
 
 /// Callback signature for cache hit notification.
-typedef SmartImageCacheHitCallback = void Function(
-    SmartImageCacheSource source);
+typedef EasyImageCacheHitCallback = void Function(
+    EasyImageCacheSource source);
 
 /// Callback signature for image load completion.
-typedef SmartImageLoadCompleteCallback = void Function(SmartImageLoadInfo info);
+typedef EasyImageLoadCompleteCallback = void Function(EasyImageLoadInfo info);
 
 /// Callback signature for image load failure.
-typedef SmartImageErrorCallback = void Function(SmartImageException error);
+typedef EasyImageErrorCallback = void Function(EasyImageException error);
 
 /// Callback signature for download progress reporting.
-typedef SmartImageProgressCallback = void Function(
+typedef EasyImageProgressCallback = void Function(
     int receivedBytes, int totalBytes);
 
 /// Callback signature for custom retry backoff strategy.
-typedef SmartImageRetryBackoff = Duration Function(
+typedef EasyImageRetryBackoff = Duration Function(
     int attempt, Duration baseDelay);
 
 /// Callback signature for transforming URLs for CDN / dynamic image resizing services.
-typedef SmartImageCdnTransform = String Function(String url,
+typedef EasyImageCdnTransform = String Function(String url,
     {int? width, int? height});
 
 /// Information provided when an image completes loading.
 @immutable
-class SmartImageLoadInfo {
+class EasyImageLoadInfo {
   /// The resolved source that was loaded.
   final String source;
 
   /// The cache source that served the image.
-  final SmartImageCacheSource cacheSource;
+  final EasyImageCacheSource cacheSource;
 
   /// The size in bytes of the loaded image, if known.
   final int? byteLength;
@@ -43,7 +43,7 @@ class SmartImageLoadInfo {
   /// The time taken to fetch/decode the image.
   final Duration? duration;
 
-  const SmartImageLoadInfo({
+  const EasyImageLoadInfo({
     required this.source,
     required this.cacheSource,
     this.byteLength,
@@ -51,9 +51,9 @@ class SmartImageLoadInfo {
   });
 }
 
-/// Advanced configuration object for [SmartImage].
+/// Advanced configuration object for [EasyImage].
 @immutable
-class SmartImageConfig {
+class EasyImageConfig {
   /// The maximum allowed download size in bytes. Defaults to 20 MB (20,971,520 bytes).
   final int maxBytes;
 
@@ -73,10 +73,10 @@ class SmartImageConfig {
   final String? darkUrl;
 
   /// Custom retry backoff function. If null, exponential backoff with jitter is used.
-  final SmartImageRetryBackoff? retryBackoff;
+  final EasyImageRetryBackoff? retryBackoff;
 
-  /// Custom cache manager instance. Defaults to built-in [SmartImageCacheService.instance].
-  final SmartImageCacheManager? cacheManager;
+  /// Custom cache manager instance. Defaults to built-in cache service instance.
+  final EasyImageCacheManager? cacheManager;
 
   /// Maximum concurrent network downloads allowed simultaneously. Defaults to 6.
   final int maxConcurrentDownloads;
@@ -85,7 +85,7 @@ class SmartImageConfig {
   final bool includeHeadersInCacheKey;
 
   /// Pluggable CDN URL transformation function.
-  final SmartImageCdnTransform? cdnTransform;
+  final EasyImageCdnTransform? cdnTransform;
 
   /// Optional BlurHash string decoded as a progressive placeholder gradient.
   final String? blurHash;
@@ -106,21 +106,21 @@ class SmartImageConfig {
   final int? loopCount;
 
   /// Called when an image loading operation begins.
-  final SmartImageLoadStartCallback? onLoadStart;
+  final EasyImageLoadStartCallback? onLoadStart;
 
   /// Called when an image is retrieved from cache or network.
-  final SmartImageCacheHitCallback? onCacheHit;
+  final EasyImageCacheHitCallback? onCacheHit;
 
   /// Called when an image successfully completes loading.
-  final SmartImageLoadCompleteCallback? onLoadComplete;
+  final EasyImageLoadCompleteCallback? onLoadComplete;
 
   /// Called when an image fails to load.
-  final SmartImageErrorCallback? onError;
+  final EasyImageErrorCallback? onError;
 
   /// Called as network image bytes are downloaded.
-  final SmartImageProgressCallback? onLoadProgress;
+  final EasyImageProgressCallback? onLoadProgress;
 
-  const SmartImageConfig({
+  const EasyImageConfig({
     this.maxBytes = 20 * 1024 * 1024, // 20 MB
     this.defaultCacheDuration = const Duration(days: 7),
     this.timeout = const Duration(seconds: 15),
@@ -146,34 +146,34 @@ class SmartImageConfig {
   });
 
   /// Default global config instance.
-  static const SmartImageConfig defaultConfig = SmartImageConfig();
+  static const EasyImageConfig defaultConfig = EasyImageConfig();
 
   /// Creates a copy with specified fields replaced.
-  SmartImageConfig copyWith({
+  EasyImageConfig copyWith({
     int? maxBytes,
     Duration? defaultCacheDuration,
     Duration? timeout,
     Map<String, String>? headers,
     String? fallbackAsset,
     String? darkUrl,
-    SmartImageRetryBackoff? retryBackoff,
-    SmartImageCacheManager? cacheManager,
+    EasyImageRetryBackoff? retryBackoff,
+    EasyImageCacheManager? cacheManager,
     int? maxConcurrentDownloads,
     bool? includeHeadersInCacheKey,
-    SmartImageCdnTransform? cdnTransform,
+    EasyImageCdnTransform? cdnTransform,
     String? blurHash,
     String? lowResUrl,
     bool? encryptCache,
     String? encryptionKey,
     bool? autoPlay,
     int? loopCount,
-    SmartImageLoadStartCallback? onLoadStart,
-    SmartImageCacheHitCallback? onCacheHit,
-    SmartImageLoadCompleteCallback? onLoadComplete,
-    SmartImageErrorCallback? onError,
-    SmartImageProgressCallback? onLoadProgress,
+    EasyImageLoadStartCallback? onLoadStart,
+    EasyImageCacheHitCallback? onCacheHit,
+    EasyImageLoadCompleteCallback? onLoadComplete,
+    EasyImageErrorCallback? onError,
+    EasyImageProgressCallback? onLoadProgress,
   }) {
-    return SmartImageConfig(
+    return EasyImageConfig(
       maxBytes: maxBytes ?? this.maxBytes,
       defaultCacheDuration: defaultCacheDuration ?? this.defaultCacheDuration,
       timeout: timeout ?? this.timeout,
@@ -202,5 +202,13 @@ class SmartImageConfig {
   }
 }
 
-/// Type alias for [SmartImageConfig].
-typedef EasyImageConfig = SmartImageConfig;
+// Backwards compatibility aliases
+typedef SmartImageConfig = EasyImageConfig;
+typedef SmartImageLoadInfo = EasyImageLoadInfo;
+typedef SmartImageLoadStartCallback = EasyImageLoadStartCallback;
+typedef SmartImageCacheHitCallback = EasyImageCacheHitCallback;
+typedef SmartImageLoadCompleteCallback = EasyImageLoadCompleteCallback;
+typedef SmartImageErrorCallback = EasyImageErrorCallback;
+typedef SmartImageProgressCallback = EasyImageProgressCallback;
+typedef SmartImageRetryBackoff = EasyImageRetryBackoff;
+typedef SmartImageCdnTransform = EasyImageCdnTransform;

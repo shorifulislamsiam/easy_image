@@ -3,8 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:easy_image/smart_image.dart';
-import 'package:easy_image/src/services/image_downloader.dart';
+import 'package:easy_image/easy_image.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -75,9 +74,9 @@ void main() {
       expect(result.noStore, isTrue);
     });
 
-    test('SmartImageCacheService bypasses storage when noStore is true',
+    test('EasyImageCacheService bypasses storage when noStore is true',
         () async {
-      final cacheService = SmartImageCacheService(maxMemoryCacheBytes: 1000);
+      final cacheService = EasyImageCacheService(maxMemoryCacheBytes: 1000);
       const key = 'https://example.com/bypass.png';
 
       await cacheService.put(

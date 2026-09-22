@@ -3,6 +3,16 @@
 All notable changes to `easy_image` will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - Package Branding & Clean Refactoring
+
+### Changed
+- **Unified EasyImage Branding**:
+  - Promoted `EasyImage` as the primary widget and export name across all APIs.
+  - Aligned all internal class names, exceptions, and models with `EasyImage*` (`EasyImageConfig`, `EasyImageException`, `EasyImageCacheService`, etc.).
+  - Maintained complete backwards-compatible aliases (`SmartImage`, `SmartImageConfig`, etc.) for seamless upgrades.
+  - Updated disk cache storage directory to `easy_image_cache`.
+  - Refactored documentation, guides, and example project.
+
 ## [1.0.1] - WASM & WebAssembly Compatibility
 
 ### Added

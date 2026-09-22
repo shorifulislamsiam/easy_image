@@ -1,5 +1,5 @@
-/// Supported image formats detected by SmartImage.
-enum SmartImageFormat {
+/// Supported image formats detected by EasyImage.
+enum EasyImageFormat {
   /// Portable Network Graphics (raster).
   png,
 
@@ -22,9 +22,12 @@ enum SmartImageFormat {
   unknown;
 
   /// Returns true if this format is a vector format (e.g. SVG).
-  bool get isVector => this == SmartImageFormat.svg;
+  bool get isVector => this == EasyImageFormat.svg;
 
   /// Returns true if this format is an animated raster format.
   bool get isAnimated =>
-      this == SmartImageFormat.gif || this == SmartImageFormat.webp;
+      this == EasyImageFormat.gif || this == EasyImageFormat.webp;
 }
+
+/// Backwards compatibility alias for [EasyImageFormat].
+typedef SmartImageFormat = EasyImageFormat;

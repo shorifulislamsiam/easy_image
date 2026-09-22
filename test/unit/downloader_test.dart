@@ -1,28 +1,28 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/src/errors/smart_image_exception.dart';
+import 'package:easy_image/src/errors/easy_image_exception.dart';
 import 'package:easy_image/src/services/image_downloader.dart';
 
 void main() {
   group('ImageDownloader URL Validation', () {
-    test('throws SmartImageInvalidUrlException on empty URL', () {
+    test('throws EasyImageInvalidUrlException on empty URL', () {
       expect(
         () => ImageDownloader.validateUrl(''),
-        throwsA(isA<SmartImageInvalidUrlException>()),
+        throwsA(isA<EasyImageInvalidUrlException>()),
       );
       expect(
         () => ImageDownloader.validateUrl('   '),
-        throwsA(isA<SmartImageInvalidUrlException>()),
+        throwsA(isA<EasyImageInvalidUrlException>()),
       );
     });
 
-    test('throws SmartImageInvalidUrlException on non-http/https schemes', () {
+    test('throws EasyImageInvalidUrlException on non-http/https schemes', () {
       expect(
         () => ImageDownloader.validateUrl('ftp://example.com/image.png'),
-        throwsA(isA<SmartImageInvalidUrlException>()),
+        throwsA(isA<EasyImageInvalidUrlException>()),
       );
       expect(
         () => ImageDownloader.validateUrl('file:///Users/image.png'),
-        throwsA(isA<SmartImageInvalidUrlException>()),
+        throwsA(isA<EasyImageInvalidUrlException>()),
       );
     });
 

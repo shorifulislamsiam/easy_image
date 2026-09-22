@@ -3,12 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../enums/smart_image_cache_source.dart';
-import '../enums/smart_image_format.dart';
-import '../enums/smart_image_loading_type.dart';
-import '../errors/smart_image_exception.dart';
-import '../models/smart_image_config.dart';
-import '../models/smart_image_source.dart';
+import '../enums/easy_image_cache_source.dart';
+import '../enums/easy_image_format.dart';
+import '../enums/easy_image_loading_type.dart';
+import '../errors/easy_image_exception.dart';
+import '../models/easy_image_config.dart';
+import '../models/easy_image_source.dart';
 import '../services/image_cache_key.dart';
 import '../services/image_cache_manager.dart';
 import '../services/image_cache_service.dart';
@@ -18,16 +18,16 @@ import '../services/image_downloader.dart';
 import '../services/image_format_detector.dart';
 import '../services/image_retry_service.dart';
 import '../utils/file_image_helper.dart';
-import 'smart_image_error.dart';
-import 'smart_image_loader.dart';
-import 'smart_image_renderers.dart';
+import 'easy_image_error.dart';
+import 'easy_image_loader.dart';
+import 'easy_image_renderers.dart';
 
 /// The unified, all-in-one image widget for Flutter apps.
 ///
 /// Handles network loading with CDN transformation, two-tier caching with HTTP 304 revalidation,
 /// BlurHash progressive loading, optional compression, retries with backoff, local files/assets/bytes/base64,
 /// SVG vector rendering, shimmer animations, and error handling.
-class SmartImage extends StatefulWidget {
+class EasyImage extends StatefulWidget {
   /// Remote network image URL (HTTP/HTTPS).
   final String? url;
 
@@ -73,9 +73,9 @@ class SmartImage extends StatefulWidget {
   /// Custom error widget shown on failure.
   final Widget? errorWidget;
 
-  /// Loading animation style. Defaults to [SmartImageLoadingType.shimmer] if [shimmer] is true,
-  /// otherwise [SmartImageLoadingType.none].
-  final SmartImageLoadingType? loadingType;
+  /// Loading animation style. Defaults to [EasyImageLoadingType.shimmer] if [shimmer] is true,
+  /// otherwise [EasyImageLoadingType.none].
+  final EasyImageLoadingType? loadingType;
 
   /// Convenience flag to enable shimmer loading animation.
   final bool shimmer;
@@ -138,12 +138,12 @@ class SmartImage extends StatefulWidget {
   final Object? heroTag;
 
   /// Advanced configuration object.
-  final SmartImageConfig? config;
+  final EasyImageConfig? config;
 
   /// Optional custom callback invoked when the user clicks the retry button in the default error UI.
   final VoidCallback? onRetry;
 
-  const SmartImage({
+  const EasyImage({
     super.key,
     this.url,
     this.darkUrl,
@@ -186,7 +186,7 @@ class SmartImage extends StatefulWidget {
   });
 
   /// Convenience constructor for circular avatar images.
-  const SmartImage.circle({
+  const EasyImage.circle({
     super.key,
     this.url,
     this.darkUrl,
@@ -230,47 +230,47 @@ class SmartImage extends StatefulWidget {
 
   /// Clears both memory and disk caches across the entire application.
   static Future<void> clearCache() =>
-      SmartImageCacheService.instance.clearAll();
+      EasyImageCacheService.instance.clearAll();
 
   /// Clears a specific image key or URL from memory and disk caches.
   static Future<void> clearImageCache(String key) =>
-      SmartImageCacheService.instance.clearImage(key);
+      EasyImageCacheService.instance.clearImage(key);
 
   /// Clears all stored cache on user logout to prevent cross-user data leakage.
   static Future<void> clearCacheOnLogout() =>
-      SmartImageCacheService.instance.clearCacheOnLogout();
+      EasyImageCacheService.instance.clearCacheOnLogout();
 
   @override
-  State<SmartImage> createState() => _SmartImageState();
+  State<EasyImage> createState() => _EasyImageState();
 }
 
 enum _LoadStatus { loading, success, error }
 
-class _SmartImageState extends State<SmartImage> {
+class _EasyImageState extends State<EasyImage> {
   _LoadStatus _status = _LoadStatus.loading;
   ResolvedImageSource? _resolvedSource;
   Uint8List? _loadedBytes;
-  SmartImageFormat _detectedFormat = SmartImageFormat.unknown;
-  SmartImageException? _error;
+  EasyImageFormat _detectedFormat = EasyImageFormat.unknown;
+  EasyImageException? _error;
   double? _downloadProgress;
 
   /// Tracks active load operation generation to ignore superseded async callbacks.
   int _activeLoadId = 0;
   bool _isDisposed = false;
 
-  SmartImageConfig get _effectiveConfig =>
-      widget.config ?? SmartImageConfig.defaultConfig;
+  EasyImageConfig get _effectiveConfig =>
+      widget.config ?? EasyImageConfig.defaultConfig;
 
-  SmartImageCacheManager get _effectiveCacheManager =>
-      _effectiveConfig.cacheManager ?? SmartImageCacheService.instance;
+  EasyImageCacheManager get _effectiveCacheManager =>
+      _effectiveConfig.cacheManager ?? EasyImageCacheService.instance;
 
-  SmartImageLoadingType get _effectiveLoadingType {
+  EasyImageLoadingType get _effectiveLoadingType {
     if (widget.loadingType != null) return widget.loadingType!;
     if (widget.blurHash != null || _effectiveConfig.blurHash != null) {
-      return SmartImageLoadingType.blurUp;
+      return EasyImageLoadingType.blurUp;
     }
-    if (widget.shimmer) return SmartImageLoadingType.shimmer;
-    return SmartImageLoadingType.none;
+    if (widget.shimmer) return EasyImageLoadingType.shimmer;
+    return EasyImageLoadingType.none;
   }
 
   BorderRadius? get _effectiveBorderRadius {
@@ -287,7 +287,7 @@ class _SmartImageState extends State<SmartImage> {
   }
 
   @override
-  void didUpdateWidget(covariant SmartImage oldWidget) {
+  void didUpdateWidget(covariant EasyImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.url != widget.url ||
         oldWidget.darkUrl != widget.darkUrl ||
@@ -315,7 +315,7 @@ class _SmartImageState extends State<SmartImage> {
 
     ResolvedImageSource? source;
     try {
-      source = SmartImageSourceResolver.resolve(
+      source = EasyImageSourceResolver.resolve(
         url: widget.url,
         darkUrl: widget.darkUrl ?? _effectiveConfig.darkUrl,
         asset: widget.asset,
@@ -325,9 +325,9 @@ class _SmartImageState extends State<SmartImage> {
         isDarkMode: isDark,
       );
     } catch (e, st) {
-      final exc = e is SmartImageException
+      final exc = e is EasyImageException
           ? e
-          : SmartImageDecodeException('Failed to resolve image source: $e',
+          : EasyImageDecodeException('Failed to resolve image source: $e',
               cause: e, stackTrace: st);
       _handleError(exc);
       return;
@@ -335,7 +335,7 @@ class _SmartImageState extends State<SmartImage> {
 
     if (source == null) {
       _handleError(
-        const SmartImageInvalidUrlException(
+        const EasyImageInvalidUrlException(
           'No valid image source provided.',
           url: '',
         ),
@@ -360,26 +360,26 @@ class _SmartImageState extends State<SmartImage> {
 
     try {
       switch (source.type) {
-        case SmartImageSourceType.network:
+        case EasyImageSourceType.network:
           await _loadNetworkImage(source.stringData!, loadId, stopwatch);
           break;
 
-        case SmartImageSourceType.asset:
+        case EasyImageSourceType.asset:
           await _loadAssetImage(source.stringData!, loadId, stopwatch);
           break;
 
-        case SmartImageSourceType.file:
+        case EasyImageSourceType.file:
           await _loadFileImage(source.stringData!, loadId, stopwatch);
           break;
 
-        case SmartImageSourceType.bytes:
+        case EasyImageSourceType.bytes:
           await _loadBytesImage(source.byteData!, loadId, stopwatch);
           break;
       }
-    } on SmartImageException catch (e) {
+    } on EasyImageException catch (e) {
       if (loadId == _activeLoadId && !_isDisposed) {
         if (_effectiveConfig.fallbackAsset != null &&
-            source.type == SmartImageSourceType.network) {
+            source.type == EasyImageSourceType.network) {
           try {
             await _loadAssetImage(
                 _effectiveConfig.fallbackAsset!, loadId, stopwatch);
@@ -391,7 +391,7 @@ class _SmartImageState extends State<SmartImage> {
     } catch (e, st) {
       if (loadId == _activeLoadId && !_isDisposed) {
         _handleError(
-          SmartImageNetworkException(
+          EasyImageNetworkException(
             'Failed to load image: $e',
             cause: e,
             stackTrace: st,
@@ -509,11 +509,11 @@ class _SmartImageState extends State<SmartImage> {
       );
 
       _effectiveConfig.onCacheHit
-          ?.call(SmartImageCacheSource.networkNotModified);
+          ?.call(EasyImageCacheSource.networkNotModified);
       _handleSuccess(
         bytes: cached.bytes,
         format: format,
-        cacheSource: SmartImageCacheSource.networkNotModified,
+        cacheSource: EasyImageCacheSource.networkNotModified,
         sourceStr: requestUrl,
         stopwatch: stopwatch,
       );
@@ -544,11 +544,11 @@ class _SmartImageState extends State<SmartImage> {
       pathOrUrl: requestUrl,
     );
 
-    _effectiveConfig.onCacheHit?.call(SmartImageCacheSource.network);
+    _effectiveConfig.onCacheHit?.call(EasyImageCacheSource.network);
     _handleSuccess(
       bytes: downloaded.bytes,
       format: format,
-      cacheSource: SmartImageCacheSource.network,
+      cacheSource: EasyImageCacheSource.network,
       sourceStr: requestUrl,
       stopwatch: stopwatch,
     );
@@ -557,7 +557,7 @@ class _SmartImageState extends State<SmartImage> {
   Future<void> _loadAssetImage(
       String assetPath, int loadId, Stopwatch stopwatch) async {
     final byteData = await rootBundle.load(assetPath).catchError((e, st) {
-      throw SmartImageDecodeException(
+      throw EasyImageDecodeException(
         'Unable to load asset: $assetPath ($e)',
         cause: e,
         stackTrace: st,
@@ -575,7 +575,7 @@ class _SmartImageState extends State<SmartImage> {
     _handleSuccess(
       bytes: bytes,
       format: format,
-      cacheSource: SmartImageCacheSource.memory,
+      cacheSource: EasyImageCacheSource.memory,
       sourceStr: assetPath,
       stopwatch: stopwatch,
     );
@@ -584,7 +584,7 @@ class _SmartImageState extends State<SmartImage> {
   Future<void> _loadFileImage(
       String filePath, int loadId, Stopwatch stopwatch) async {
     if (kIsWeb) {
-      throw const SmartImageUnsupportedPlatformException(
+      throw const EasyImageUnsupportedPlatformException(
         'dart:io File is not supported on Web.',
         platform: 'web',
       );
@@ -593,7 +593,7 @@ class _SmartImageState extends State<SmartImage> {
     try {
       getFileImageProvider(filePath);
     } catch (e, st) {
-      throw SmartImageDecodeException(
+      throw EasyImageDecodeException(
         'Failed to load file at $filePath: $e',
         cause: e,
         stackTrace: st,
@@ -606,7 +606,7 @@ class _SmartImageState extends State<SmartImage> {
     _handleSuccess(
       bytes: Uint8List(0),
       format: format,
-      cacheSource: SmartImageCacheSource.disk,
+      cacheSource: EasyImageCacheSource.disk,
       sourceStr: filePath,
       stopwatch: stopwatch,
     );
@@ -628,7 +628,7 @@ class _SmartImageState extends State<SmartImage> {
     _handleSuccess(
       bytes: effectiveBytes,
       format: format,
-      cacheSource: SmartImageCacheSource.memory,
+      cacheSource: EasyImageCacheSource.memory,
       sourceStr: 'memory:bytes',
       stopwatch: stopwatch,
     );
@@ -636,8 +636,8 @@ class _SmartImageState extends State<SmartImage> {
 
   void _handleSuccess({
     required Uint8List bytes,
-    required SmartImageFormat format,
-    required SmartImageCacheSource cacheSource,
+    required EasyImageFormat format,
+    required EasyImageCacheSource cacheSource,
     required String sourceStr,
     required Stopwatch stopwatch,
   }) {
@@ -653,7 +653,7 @@ class _SmartImageState extends State<SmartImage> {
     });
 
     _effectiveConfig.onLoadComplete?.call(
-      SmartImageLoadInfo(
+      EasyImageLoadInfo(
         source: sourceStr,
         cacheSource: cacheSource,
         byteLength: bytes.isNotEmpty ? bytes.length : null,
@@ -662,7 +662,7 @@ class _SmartImageState extends State<SmartImage> {
     );
   }
 
-  void _handleError(SmartImageException error) {
+  void _handleError(EasyImageException error) {
     if (_isDisposed) return;
 
     setState(() {
@@ -679,7 +679,7 @@ class _SmartImageState extends State<SmartImage> {
 
     switch (_status) {
       case _LoadStatus.loading:
-        content = SmartImageLoader(
+        content = EasyImageLoader(
           loadingType: _effectiveLoadingType,
           customPlaceholder: widget.placeholder,
           blurHash: widget.blurHash ?? _effectiveConfig.blurHash,
@@ -693,7 +693,7 @@ class _SmartImageState extends State<SmartImage> {
         break;
 
       case _LoadStatus.error:
-        content = SmartImageError(
+        content = EasyImageError(
           error: _error,
           customErrorWidget: widget.errorWidget,
           onRetry: () {
@@ -708,7 +708,7 @@ class _SmartImageState extends State<SmartImage> {
         break;
 
       case _LoadStatus.success:
-        content = SmartImageRenderer(
+        content = EasyImageRenderer(
           source: _resolvedSource!,
           bytes: _loadedBytes,
           format: _detectedFormat,
@@ -759,5 +759,5 @@ class _SmartImageState extends State<SmartImage> {
   }
 }
 
-/// Type alias allowing the widget to be instantiated as [EasyImage].
-typedef EasyImage = SmartImage;
+/// Backwards compatibility alias for [EasyImage].
+typedef SmartImage = EasyImage;
