@@ -1,4 +1,3 @@
-import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import '../errors/smart_image_exception.dart';
 
@@ -56,7 +55,7 @@ class ImageCompressionService {
 
   /// Compresses a local file image and returns the compressed bytes.
   Future<Uint8List> compressFile(
-    io.File file, {
+    Object file, {
     ImageCompressionOptions options = const ImageCompressionOptions(),
   }) async {
     if (kIsWeb) {
@@ -66,12 +65,20 @@ class ImageCompressionService {
       );
     }
 
-    if (!await file.exists()) {
-      throw SmartImageDecodeException(
-          'File to compress does not exist: ${file.path}');
-    }
+    try {
+      final dynamic f = file;
+      final exists = await f.exists();
+      if (!exists) {
+        throw SmartImageDecodeException(
+            'File to compress does not exist: ${f.path}');
+      }
 
-    final bytes = await file.readAsBytes();
-    return compressBytes(bytes, options: options);
+      final Uint8List bytes = await f.readAsBytes();
+      return await compressBytes(bytes, options: options);
+    } catch (e) {
+      if (e is SmartImageException) rethrow;
+      throw SmartImageDecodeException(
+          'Failed to read file for compression: $e');
+    }
   }
 }
