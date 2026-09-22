@@ -403,6 +403,9 @@ class _SmartImageState extends State<SmartImage> {
 
   Future<void> _loadNetworkImage(
       String url, int loadId, Stopwatch stopwatch) async {
+    // Validate URL upfront
+    ImageDownloader.validateUrl(url);
+
     // Apply CDN URL transformation if configured
     String requestUrl = url;
     if (_effectiveConfig.cdnTransform != null) {

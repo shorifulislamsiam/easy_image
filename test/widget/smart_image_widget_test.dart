@@ -10,6 +10,14 @@ final Uint8List kTestPngBytes = base64Decode(
 );
 
 void main() {
+  setUp(() {
+    ImageDownloadQueue.shared.clearQueue();
+  });
+
+  tearDown(() {
+    ImageDownloadQueue.shared.clearQueue();
+  });
+
   group('SmartImage Widget Tests', () {
     testWidgets('renders placeholder when loading', (tester) async {
       await tester.pumpWidget(
@@ -67,12 +75,15 @@ void main() {
           home: Scaffold(
             body: SmartImage(
               url: 'ftp://bad-url.png',
+              retryCount: 0,
               errorWidget: const Text('Failed to load'),
             ),
           ),
         ),
       );
 
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.pumpAndSettle();
       expect(find.text('Failed to load'), findsOneWidget);
     });
