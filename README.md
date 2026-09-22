@@ -3,22 +3,22 @@
 A production-ready Flutter package providing a unified widget for displaying images with built-in two-tier caching, HTTP 304 revalidation, LRU eviction, BlurHash progressive loading, CDN transformations, concurrency limiting, loading shimmer, error retry with backoff, local file/asset/memory support, and first-class SVG rendering.
 
 [![CI](https://github.com/shorifulislamsiam/easy_image/actions/workflows/ci.yml/badge.svg)](https://github.com/shorifulislamsiam/easy_image/actions/workflows/ci.yml)
-[![pub package](https://img.shields.io/badge/pub.dev-1.0.0-blue.svg)](https://pub.dev/packages/easy_image)
+[![pub package](https://img.shields.io/badge/pub.dev-1.0.2-blue.svg)](https://pub.dev/packages/easy_image)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
 ## 1. Introduction
 
-`SmartImage` replaces all image-related boilerplate in Flutter apps with a single, highly-optimized widget:
+`EasyImage` replaces all image-related boilerplate in Flutter apps with a single, highly-optimized widget:
 
 ```dart
-SmartImage(
+EasyImage(
   url: user.profileImageUrl,
 )
 ```
 
-Whether you are loading remote HTTP/HTTPS images, bundled assets, local files, in-memory bytes, Base64 strings, animated GIFs, or vector SVGs, `SmartImage` automatically detects the format, applies two-tier caching with HTTP 304 revalidation, limits concurrent connections, handles progressive BlurHash loading, and recovers from transient network drops with jittered backoff retries.
+Whether you are loading remote HTTP/HTTPS images, bundled assets, local files, in-memory bytes, Base64 strings, animated GIFs, or vector SVGs, `EasyImage` automatically detects the format, applies two-tier caching with HTTP 304 revalidation, limits concurrent connections, handles progressive BlurHash loading, and recovers from transient network drops with jittered backoff retries.
 
 ---
 
@@ -28,7 +28,7 @@ Add `easy_image` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  easy_image: ^1.0.0
+  easy_image: ^1.0.2
 ```
 
 Then run:
@@ -47,7 +47,7 @@ flutter pub get
 import 'package:easy_image/easy_image.dart';
 
 // Display a network image with default shimmer loading and error recovery
-SmartImage(
+EasyImage(
   url: 'https://example.com/avatar.jpg',
   width: 120,
   height: 120,
@@ -61,7 +61,7 @@ SmartImage(
 ## 4. Network Images
 
 ```dart
-SmartImage(
+EasyImage(
   url: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675',
   width: 300,
   height: 200,
@@ -75,7 +75,7 @@ SmartImage(
 ## 5. Asset Images
 
 ```dart
-SmartImage(
+EasyImage(
   asset: 'assets/images/logo.png',
   width: 150,
   height: 150,
@@ -89,7 +89,7 @@ SmartImage(
 ```dart
 import 'dart:io';
 
-SmartImage(
+EasyImage(
   file: File('/path/to/local/storage/photo.jpg'),
   width: 200,
   height: 200,
@@ -104,14 +104,14 @@ SmartImage(
 
 ```dart
 // Raw byte Uint8List (e.g. from camera picker)
-SmartImage(
+EasyImage(
   bytes: capturedImageBytes,
   width: 200,
   height: 200,
 )
 
 // Base64 string / Data URI
-SmartImage(
+EasyImage(
   base64: 'data:image/png;base64,iVBORw0KGgo...',
   width: 100,
   height: 100,
@@ -122,18 +122,18 @@ SmartImage(
 
 ## 8. SVG & Animated Format Support
 
-`SmartImage` automatically inspects Content-Type headers and sniffs magic byte signatures to detect vector SVGs, animated GIFs, and WebP:
+`EasyImage` automatically inspects Content-Type headers and sniffs magic byte signatures to detect vector SVGs, animated GIFs, and WebP:
 
 ```dart
 // Remote or bundled SVG vector
-SmartImage(
+EasyImage(
   url: 'https://example.com/vector_icon.svg',
   width: 48,
   height: 48,
 )
 
 // Animated GIF with loop count control
-SmartImage(
+EasyImage(
   url: 'https://example.com/animation.gif',
   autoPlay: true,
   loopCount: 3,
@@ -146,11 +146,11 @@ SmartImage(
 
 ## 9. Placeholders, Shimmer & BlurHash Progressive Loading
 
-`SmartImage` includes a built-in pure Dart BlurHash decoder that decodes compact BlurHash strings off the main isolate:
+`EasyImage` includes a built-in pure Dart BlurHash decoder that decodes compact BlurHash strings:
 
 ```dart
 // BlurHash progressive placeholder
-SmartImage(
+EasyImage(
   url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500',
   blurHash: 'L6PZfSi_.AyE_3t7t7R**0o#DgR4',
   width: 260,
@@ -159,10 +159,10 @@ SmartImage(
 )
 
 // Shimmer effect
-SmartImage(
+EasyImage(
   url: imageUrl,
   shimmer: true,
-  loadingType: SmartImageLoadingType.shimmer,
+  loadingType: EasyImageLoadingType.shimmer,
 )
 ```
 
@@ -172,33 +172,33 @@ SmartImage(
 
 ## 10. Error Handling & Exception Taxonomy
 
-All errors thrown and passed to `onError` conform to the sealed `SmartImageException` hierarchy:
+All errors thrown and passed to `onError` conform to the sealed `EasyImageException` hierarchy:
 
 ```dart
-SmartImage(
+EasyImage(
   url: imageUrl,
   errorWidget: Container(
     color: Colors.red.shade50,
     child: const Icon(Icons.error, color: Colors.red),
   ),
-  config: SmartImageConfig(
+  config: EasyImageConfig(
     onError: (error) {
       switch (error) {
-        case SmartImageNetworkException(:final statusCode, :final url):
+        case EasyImageNetworkException(:final statusCode, :final url):
           debugPrint('Network failure ($statusCode) on $url');
-        case SmartImageTimeoutException():
+        case EasyImageTimeoutException():
           debugPrint('Request timed out');
-        case SmartImageSizeLimitExceededException(:final actualBytes, :final maxBytes):
+        case EasyImageSizeLimitExceededException(:final actualBytes, :final maxBytes):
           debugPrint('Image exceeded $maxBytes bytes (was $actualBytes bytes)');
-        case SmartImageDecodeException():
+        case EasyImageDecodeException():
           debugPrint('Corrupted image payload');
-        case SmartImageUnsupportedFormatException(:final format):
+        case EasyImageUnsupportedFormatException(:final format):
           debugPrint('Unsupported format: $format');
-        case SmartImageUnsupportedPlatformException(:final platform):
+        case EasyImageUnsupportedPlatformException(:final platform):
           debugPrint('Platform $platform does not support this operation');
-        case SmartImageMissingDependencyException(:final dependency):
+        case EasyImageMissingDependencyException(:final dependency):
           debugPrint('Missing optional dependency: $dependency');
-        case SmartImageInvalidUrlException(:final url):
+        case EasyImageInvalidUrlException(:final url):
           debugPrint('Invalid URL scheme: $url');
       }
     },
@@ -210,10 +210,10 @@ SmartImage(
 
 ## 11. Automatic Retry with Exponential Backoff & Jitter
 
-When a network image fails due to a transient connection error or 5xx server status, `SmartImage` can automatically retry using exponential backoff with randomized jitter to prevent server retry storms:
+When a network image fails due to a transient connection error or 5xx server status, `EasyImage` can automatically retry using exponential backoff with randomized jitter to prevent server retry storms:
 
 ```dart
-SmartImage(
+EasyImage(
   url: imageUrl,
   retryCount: 3,
   retryDelay: Duration(seconds: 2), // Base delay (exponential backoff applied)
@@ -226,14 +226,14 @@ SmartImage(
 
 ```dart
 // Circular Avatar shortcut
-SmartImage.circle(
+EasyImage.circle(
   url: userAvatarUrl,
   radius: 32,
   shimmer: true,
 )
 
 // Rounded rectangle with custom background
-SmartImage(
+EasyImage(
   url: imageUrl,
   width: 140,
   height: 140,
@@ -247,22 +247,22 @@ SmartImage(
 
 ## 13. Two-Tier Cache & HTTP 304 Revalidation
 
-`SmartImage` implements an intelligent two-tier (In-Memory + Disk) caching layer with automatic HTTP revalidation:
+`EasyImage` implements an intelligent two-tier (In-Memory + Disk) caching layer with automatic HTTP revalidation:
 
 1. **`Cache-Control: no-store`**: If response contains `no-store`, caching is completely bypassed (0 disk/memory footprint).
 2. **Freshness (`max-age`)**: If cached entry is within its `max-age` window, it is served immediately from memory/disk with 0 network calls.
-3. **Revalidation (`ETag` / `Last-Modified`)**: If cached entry is stale, a conditional request (`If-None-Match`, `If-Modified-Since`) is made. An HTTP `304 Not Modified` reuses local cached bytes, updates freshness, and notifies `SmartImageCacheSource.networkNotModified`.
+3. **Revalidation (`ETag` / `Last-Modified`)**: If cached entry is stale, a conditional request (`If-None-Match`, `If-Modified-Since`) is made. An HTTP `304 Not Modified` reuses local cached bytes, updates freshness, and notifies `EasyImageCacheSource.networkNotModified`.
 4. **LRU Eviction**: In-memory and disk caches strictly respect size quotas (e.g. `maxMemoryCacheBytes: 50MB`, `maxDiskCacheBytes: 250MB`), automatically evicting least-recently-used items when limits are reached.
 
 ```dart
 // Clear entire cache (Memory + Disk)
-await SmartImage.clearCache();
+await EasyImage.clearCache();
 
 // Clear specific URL
-await SmartImage.clearImageCache('https://example.com/photo.png');
+await EasyImage.clearImageCache('https://example.com/photo.png');
 
 // Clear all user cache on account logout
-await SmartImage.clearCacheOnLogout();
+await EasyImage.clearCacheOnLogout();
 ```
 
 ---
@@ -272,7 +272,7 @@ await SmartImage.clearCacheOnLogout();
 Support optional compression for local/file images:
 
 ```dart
-SmartImage(
+EasyImage(
   bytes: cameraBytes,
   compress: true,
   quality: 80, // Quality from 1 to 100
@@ -283,12 +283,12 @@ SmartImage(
 
 ## 15. Concurrent Download Limiter
 
-To avoid saturating network connections and UI isolates when scrolling long image feeds or grids, `SmartImage` processes downloads through a concurrent queue (`ImageDownloadQueue`):
+To avoid saturating network connections and UI isolates when scrolling long image feeds or grids, `EasyImage` processes downloads through a concurrent queue (`ImageDownloadQueue`):
 
 ```dart
-SmartImage(
+EasyImage(
   url: imageUrl,
-  config: SmartImageConfig(
+  config: EasyImageConfig(
     maxConcurrentDownloads: 6, // Up to 6 simultaneous downloads
   ),
 )
@@ -301,11 +301,11 @@ SmartImage(
 Pluggable dynamic resizing using Cloudinary, Imgix, Cloudflare Images, or custom image resizing gateways:
 
 ```dart
-SmartImage(
+EasyImage(
   url: 'https://images.example.com/original.jpg',
   width: 200,
   height: 150,
-  config: SmartImageConfig(
+  config: EasyImageConfig(
     cdnTransform: (url, {width, height}) {
       return '$url?w=$width&h=$height&fit=crop';
     },
@@ -318,15 +318,15 @@ SmartImage(
 ## 17. Lifecycle & Observability Hooks
 
 ```dart
-SmartImage(
+EasyImage(
   url: imageUrl,
-  config: SmartImageConfig(
+  config: EasyImageConfig(
     onLoadStart: () => debugPrint('Image loading started'),
     onCacheHit: (source) {
-      // SmartImageCacheSource.memory
-      // SmartImageCacheSource.disk
-      // SmartImageCacheSource.networkNotModified (HTTP 304)
-      // SmartImageCacheSource.network (Fresh download)
+      // EasyImageCacheSource.memory
+      // EasyImageCacheSource.disk
+      // EasyImageCacheSource.networkNotModified (HTTP 304)
+      // EasyImageCacheSource.network (Fresh download)
       debugPrint('Cache source: $source');
     },
     onLoadProgress: (received, total) {
@@ -340,7 +340,7 @@ SmartImage(
 
 ---
 
-## 21. Platform Support Matrix
+## 18. Platform Support Matrix
 
 | Feature | Android | iOS | Web | macOS | Windows | Linux |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -361,13 +361,13 @@ SmartImage(
 
 ---
 
-## 24. Migration Guide
+## 19. Migration Guide
 
 Moving from `cached_network_image` or `extended_image`? See our detailed [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) for step-by-step mapping of common APIs.
 
 ---
 
-## 25. Pub.dev Pre-Publish Checklist
+## 20. Pub.dev Pre-Publish Checklist
 
 Before publishing to pub.dev, verify:
 - [x] All platforms declared in `pubspec.yaml`.
@@ -379,6 +379,6 @@ Before publishing to pub.dev, verify:
 
 ---
 
-## 27. License
+## 21. License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

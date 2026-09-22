@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-import '../errors/smart_image_exception.dart';
-import '../models/smart_image_config.dart';
+import '../errors/easy_image_exception.dart';
+import '../models/easy_image_config.dart';
 
 /// Represents downloaded image payload and HTTP cache metadata.
 class DownloadedImage {
@@ -38,7 +38,7 @@ class ImageDownloader {
   /// Validates a URL string and returns a parsed [Uri].
   static Uri validateUrl(String url) {
     if (url.trim().isEmpty) {
-      throw const SmartImageInvalidUrlException(
+      throw const EasyImageInvalidUrlException(
         'Image URL cannot be empty.',
         url: '',
       );
@@ -48,7 +48,7 @@ class ImageDownloader {
     if (uri == null ||
         !uri.hasScheme ||
         (uri.scheme != 'http' && uri.scheme != 'https')) {
-      throw SmartImageInvalidUrlException(
+      throw EasyImageInvalidUrlException(
         'Invalid or unsupported URL scheme (must be http or https): $url',
         url: url,
       );
@@ -65,13 +65,13 @@ class ImageDownloader {
     String? cachedLastModified,
     Duration timeout = const Duration(seconds: 15),
     int maxBytes = 20 * 1024 * 1024,
-    SmartImageProgressCallback? onProgress,
+    EasyImageProgressCallback? onProgress,
     bool Function()? isCancelled,
   }) async {
     final uri = validateUrl(url);
 
     if (isCancelled?.call() == true) {
-      throw const SmartImageTimeoutException(
+      throw const EasyImageTimeoutException(
           'Download cancelled before start.');
     }
 
@@ -94,16 +94,16 @@ class ImageDownloader {
       streamedResponse = await futureResponse.timeout(
         timeout,
         onTimeout: () {
-          throw SmartImageTimeoutException(
+          throw EasyImageTimeoutException(
             'Connection timed out after ${timeout.inSeconds} seconds for: $url',
             timeout: timeout,
           );
         },
       );
-    } on SmartImageException {
+    } on EasyImageException {
       rethrow;
     } catch (e, st) {
-      throw SmartImageNetworkException(
+      throw EasyImageNetworkException(
         'Failed to establish connection to $url: $e',
         url: url,
         cause: e,
@@ -132,7 +132,7 @@ class ImageDownloader {
 
     if (streamedResponse.statusCode < 200 ||
         streamedResponse.statusCode >= 300) {
-      throw SmartImageNetworkException(
+      throw EasyImageNetworkException(
         'Server returned HTTP status ${streamedResponse.statusCode} for $url',
         statusCode: streamedResponse.statusCode,
         url: url,
@@ -150,7 +150,7 @@ class ImageDownloader {
     // Check declared Content-Length header against maxBytes guard
     final contentLength = streamedResponse.contentLength ?? -1;
     if (contentLength > maxBytes) {
-      throw SmartImageSizeLimitExceededException(
+      throw EasyImageSizeLimitExceededException(
         'Image declared Content-Length ($contentLength bytes) exceeds maximum limit ($maxBytes bytes).',
         actualBytes: contentLength,
         maxBytes: maxBytes,
@@ -173,7 +173,7 @@ class ImageDownloader {
           cleanup();
           if (!completer.isCompleted) {
             completer.completeError(
-              const SmartImageTimeoutException(
+              const EasyImageTimeoutException(
                   'Download cancelled during stream.'),
             );
           }
@@ -185,7 +185,7 @@ class ImageDownloader {
           cleanup();
           if (!completer.isCompleted) {
             completer.completeError(
-              SmartImageSizeLimitExceededException(
+              EasyImageSizeLimitExceededException(
                 'Streamed download exceeded maximum limit of $maxBytes bytes.',
                 actualBytes: receivedBytes,
                 maxBytes: maxBytes,
@@ -202,7 +202,7 @@ class ImageDownloader {
         cleanup();
         if (!completer.isCompleted) {
           completer.completeError(
-            SmartImageNetworkException(
+            EasyImageNetworkException(
               'Error while streaming image response: $error',
               url: url,
               cause: error,
@@ -223,7 +223,7 @@ class ImageDownloader {
       timeout,
       onTimeout: () {
         cleanup();
-        throw SmartImageTimeoutException(
+        throw EasyImageTimeoutException(
           'Streaming response timed out after ${timeout.inSeconds} seconds for $url',
           timeout: timeout,
         );

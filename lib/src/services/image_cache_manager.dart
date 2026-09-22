@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../enums/smart_image_cache_source.dart';
+import '../enums/easy_image_cache_source.dart';
 
 /// Result returned from a cache lookup, containing image bytes and metadata.
 @immutable
@@ -11,7 +11,7 @@ class CachedImageResult {
   final String? contentType;
 
   /// Where the image was retrieved from (Memory, Disk, etc.).
-  final SmartImageCacheSource source;
+  final EasyImageCacheSource source;
 
   /// HTTP ETag validator string stored with the entry.
   final String? eTag;
@@ -36,8 +36,8 @@ class CachedImageResult {
   });
 }
 
-/// Abstract contract for custom cache managers in SmartImage.
-abstract class SmartImageCacheManager {
+/// Abstract contract for custom cache managers in EasyImage.
+abstract class EasyImageCacheManager {
   /// Retrieves a cached image entry by key.
   Future<CachedImageResult?> get(String key);
 
@@ -68,3 +68,6 @@ abstract class SmartImageCacheManager {
   /// Total approximate bytes currently occupied in the disk cache.
   Future<int> getDiskByteCount();
 }
+
+/// Backwards compatibility alias for [EasyImageCacheManager].
+typedef SmartImageCacheManager = EasyImageCacheManager;

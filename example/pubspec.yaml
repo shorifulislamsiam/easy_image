@@ -1,7 +1,7 @@
 name: example
-description: Demonstrates how to use the smart_image package.
+description: Demonstrates how to use the easy_image package.
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.2+1
 
 environment:
   sdk: ">=3.3.0 <4.0.0"

@@ -1,5 +1,5 @@
 /// Identifies where an image was retrieved from.
-enum SmartImageCacheSource {
+enum EasyImageCacheSource {
   /// Served directly from the fast in-memory cache.
   memory,
 
@@ -12,3 +12,6 @@ enum SmartImageCacheSource {
   /// Freshly downloaded over the network.
   network,
 }
+
+/// Backwards compatibility alias for [EasyImageCacheSource].
+typedef SmartImageCacheSource = EasyImageCacheSource;

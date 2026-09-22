@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
-import '../errors/smart_image_exception.dart';
-import '../models/smart_image_config.dart';
+import '../errors/easy_image_exception.dart';
+import '../models/easy_image_config.dart';
 
 /// Handles retry attempts with exponential backoff and jitter.
 class ImageRetryService {
@@ -11,7 +11,7 @@ class ImageRetryService {
   static Duration calculateDelay({
     required int attempt,
     required Duration baseDelay,
-    SmartImageRetryBackoff? customBackoff,
+    EasyImageRetryBackoff? customBackoff,
     Random? random,
   }) {
     if (customBackoff != null) {
@@ -33,16 +33,16 @@ class ImageRetryService {
   }
 
   /// Determines whether a given exception is eligible for retry.
-  static bool shouldRetry(SmartImageException exception) {
+  static bool shouldRetry(EasyImageException exception) {
     return switch (exception) {
-      SmartImageNetworkException() => true,
-      SmartImageTimeoutException() => true,
-      SmartImageDecodeException() => false,
-      SmartImageUnsupportedFormatException() => false,
-      SmartImageUnsupportedPlatformException() => false,
-      SmartImageMissingDependencyException() => false,
-      SmartImageSizeLimitExceededException() => false,
-      SmartImageInvalidUrlException() => false,
+      EasyImageNetworkException() => true,
+      EasyImageTimeoutException() => true,
+      EasyImageDecodeException() => false,
+      EasyImageUnsupportedFormatException() => false,
+      EasyImageUnsupportedPlatformException() => false,
+      EasyImageMissingDependencyException() => false,
+      EasyImageSizeLimitExceededException() => false,
+      EasyImageInvalidUrlException() => false,
     };
   }
 
@@ -51,21 +51,21 @@ class ImageRetryService {
     required Future<T> Function() operation,
     required int retryCount,
     required Duration baseDelay,
-    SmartImageRetryBackoff? customBackoff,
+    EasyImageRetryBackoff? customBackoff,
     bool Function()? isCancelled,
-    void Function(SmartImageException error, int attempt, Duration nextDelay)?
+    void Function(EasyImageException error, int attempt, Duration nextDelay)?
         onRetry,
   }) async {
     int attempts = 0;
 
     while (true) {
       if (isCancelled?.call() == true) {
-        throw const SmartImageTimeoutException('Operation cancelled.');
+        throw const EasyImageTimeoutException('Operation cancelled.');
       }
 
       try {
         return await operation();
-      } on SmartImageException catch (e) {
+      } on EasyImageException catch (e) {
         if (!shouldRetry(e) || attempts >= retryCount) {
           rethrow;
         }
@@ -84,11 +84,11 @@ class ImageRetryService {
         }
 
         if (isCancelled?.call() == true) {
-          throw const SmartImageTimeoutException(
+          throw const EasyImageTimeoutException(
               'Operation cancelled during retry wait.');
         }
       } catch (e, st) {
-        final wrapped = SmartImageNetworkException(
+        final wrapped = EasyImageNetworkException(
           'Unexpected error during image fetch: $e',
           cause: e,
           stackTrace: st,

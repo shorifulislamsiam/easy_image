@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/smart_image.dart';
+import 'package:easy_image/easy_image.dart';
 
 final Uint8List kTestPng1 = base64Decode(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
@@ -15,7 +15,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               url: 'https://example.com/slow_response.png',
               shimmer: true,
             ),
@@ -24,7 +24,7 @@ void main() {
       );
 
       // Verify widget mounted and loading
-      expect(find.byType(SmartImage), findsOneWidget);
+      expect(find.byType(EasyImage), findsOneWidget);
 
       // Immediately unmount/replace widget while request is pending
       await tester.pumpWidget(
@@ -36,7 +36,7 @@ void main() {
       );
 
       await tester.pumpAndSettle();
-      expect(find.byType(SmartImage), findsNothing);
+      expect(find.byType(EasyImage), findsNothing);
       // No unhandled exceptions or setState after dispose
     });
 
@@ -45,7 +45,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               url: 'https://example.com/image1.png',
             ),
           ),
@@ -56,7 +56,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SmartImage(
+            body: EasyImage(
               bytes: kTestPng1,
             ),
           ),

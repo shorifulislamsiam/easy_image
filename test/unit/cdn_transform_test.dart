@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/smart_image.dart';
+import 'package:easy_image/easy_image.dart';
 
 void main() {
   group('CDN URL Transformation', () {
     test('applies custom cdnTransform function to resize URL', () {
-      final config = SmartImageConfig(
+      final config = EasyImageConfig(
         cdnTransform: (url, {width, height}) {
           final uri = Uri.parse(url);
           final params = Map<String, String>.from(uri.queryParameters);

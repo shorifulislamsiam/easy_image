@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../enums/smart_image_loading_type.dart';
+import '../enums/easy_image_loading_type.dart';
 import '../utils/blurhash_decoder.dart';
-import 'smart_image_shimmer.dart';
+import 'easy_image_shimmer.dart';
 
-/// Renders the appropriate placeholder/loading state for [SmartImage],
+/// Renders the appropriate placeholder/loading state for [EasyImage],
 /// supporting BlurHash progressive placeholders, low-res previews, and shimmer animations.
-class SmartImageLoader extends StatefulWidget {
-  final SmartImageLoadingType loadingType;
+class EasyImageLoader extends StatefulWidget {
+  final EasyImageLoadingType loadingType;
   final Widget? customPlaceholder;
   final String? blurHash;
   final String? lowResUrl;
@@ -17,7 +17,7 @@ class SmartImageLoader extends StatefulWidget {
   final Color? backgroundColor;
   final double? progress;
 
-  const SmartImageLoader({
+  const EasyImageLoader({
     super.key,
     required this.loadingType,
     this.customPlaceholder,
@@ -31,10 +31,10 @@ class SmartImageLoader extends StatefulWidget {
   });
 
   @override
-  State<SmartImageLoader> createState() => _SmartImageLoaderState();
+  State<EasyImageLoader> createState() => _EasyImageLoaderState();
 }
 
-class _SmartImageLoaderState extends State<SmartImageLoader> {
+class _EasyImageLoaderState extends State<EasyImageLoader> {
   Uint8List? _blurHashBytes;
 
   @override
@@ -44,7 +44,7 @@ class _SmartImageLoaderState extends State<SmartImageLoader> {
   }
 
   @override
-  void didUpdateWidget(covariant SmartImageLoader oldWidget) {
+  void didUpdateWidget(covariant EasyImageLoader oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.blurHash != widget.blurHash) {
       _decodeBlurHash();
@@ -101,14 +101,14 @@ class _SmartImageLoaderState extends State<SmartImageLoader> {
 
   Widget _buildLoadingContent(BuildContext context) {
     switch (widget.loadingType) {
-      case SmartImageLoadingType.shimmer:
-        return SmartImageShimmer(
+      case EasyImageLoadingType.shimmer:
+        return EasyImageShimmer(
           width: widget.width,
           height: widget.height,
           borderRadius: widget.borderRadius,
         );
 
-      case SmartImageLoadingType.progress:
+      case EasyImageLoadingType.progress:
         return Center(
           child: SizedBox(
             width: 24,
@@ -120,10 +120,13 @@ class _SmartImageLoaderState extends State<SmartImageLoader> {
           ),
         );
 
-      case SmartImageLoadingType.none:
-      case SmartImageLoadingType.fade:
-      case SmartImageLoadingType.blurUp:
+      case EasyImageLoadingType.none:
+      case EasyImageLoadingType.fade:
+      case EasyImageLoadingType.blurUp:
         return const SizedBox.shrink();
     }
   }
 }
+
+/// Backwards compatibility alias for [EasyImageLoader].
+typedef SmartImageLoader = EasyImageLoader;

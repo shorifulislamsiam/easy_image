@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import '../errors/smart_image_exception.dart';
+import '../errors/easy_image_exception.dart';
 
 /// The raw type of the resolved image source.
-enum SmartImageSourceType {
+enum EasyImageSourceType {
   /// Remote network image via HTTP/HTTPS.
   network,
 
@@ -21,15 +21,15 @@ enum SmartImageSourceType {
 @immutable
 class ResolvedImageSource {
   /// The resolved source type.
-  final SmartImageSourceType type;
+  final EasyImageSourceType type;
 
   /// The string identifier (URL, asset path, or file path).
   final String? stringData;
 
-  /// The in-memory byte data if source is [SmartImageSourceType.bytes].
+  /// The in-memory byte data if source is [EasyImageSourceType.bytes].
   final Uint8List? byteData;
 
-  /// The file instance if source is [SmartImageSourceType.file].
+  /// The file instance if source is [EasyImageSourceType.file].
   final Object? fileData;
 
   const ResolvedImageSource._({
@@ -41,23 +41,23 @@ class ResolvedImageSource {
 
   /// Creates a network resolved source.
   const ResolvedImageSource.network(String url)
-      : this._(type: SmartImageSourceType.network, stringData: url);
+      : this._(type: EasyImageSourceType.network, stringData: url);
 
   /// Creates an asset resolved source.
   const ResolvedImageSource.asset(String assetPath)
-      : this._(type: SmartImageSourceType.asset, stringData: assetPath);
+      : this._(type: EasyImageSourceType.asset, stringData: assetPath);
 
   /// Creates a file resolved source.
   ResolvedImageSource.file(Object file)
       : this._(
-          type: SmartImageSourceType.file,
+          type: EasyImageSourceType.file,
           stringData: _extractFilePath(file),
           fileData: file,
         );
 
   /// Creates an in-memory bytes resolved source.
   const ResolvedImageSource.bytes(Uint8List bytes)
-      : this._(type: SmartImageSourceType.bytes, byteData: bytes);
+      : this._(type: EasyImageSourceType.bytes, byteData: bytes);
 
   static String _extractFilePath(Object file) {
     try {
@@ -85,7 +85,7 @@ class ResolvedImageSource {
 }
 
 /// Helper for resolving image sources based on strict priority.
-class SmartImageSourceResolver {
+class EasyImageSourceResolver {
   /// Resolves the effective image source according to priority rules:
   ///
   /// `darkUrl` (if isDarkMode and non-null) → `url` → `asset` → `file` → `bytes` → `base64`
@@ -140,7 +140,7 @@ class SmartImageSourceResolver {
                         : (bytes != null ? 'bytes' : 'base64'))));
         final ignored = providedSources.keys.where((k) => k != chosen).toList();
         debugPrint(
-          '⚠️ [SmartImage Warning] Multiple image sources provided (${providedSources.keys.join(', ')}). '
+          '⚠️ [EasyImage Warning] Multiple image sources provided (${providedSources.keys.join(', ')}). '
           'Prioritizing "$chosen" and ignoring: ${ignored.join(', ')}.',
         );
       }
@@ -162,7 +162,7 @@ class SmartImageSourceResolver {
 
     if (file != null) {
       if (kIsWeb) {
-        throw const SmartImageUnsupportedPlatformException(
+        throw const EasyImageUnsupportedPlatformException(
           'dart:io File is not supported on Flutter Web. Use bytes, asset, or url instead.',
           platform: 'web',
         );
@@ -180,7 +180,7 @@ class SmartImageSourceResolver {
         final decodedBytes = base64Decode(cleanBase64);
         return ResolvedImageSource.bytes(decodedBytes);
       } catch (e, st) {
-        throw SmartImageDecodeException(
+        throw EasyImageDecodeException(
           'Failed to decode Base64 image data: $e',
           cause: e,
           stackTrace: st,
@@ -198,3 +198,7 @@ class SmartImageSourceResolver {
     return input;
   }
 }
+
+// Backwards compatibility aliases
+typedef SmartImageSourceType = EasyImageSourceType;
+typedef SmartImageSourceResolver = EasyImageSourceResolver;

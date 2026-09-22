@@ -1,5 +1,5 @@
-/// Loading animation styles supported by [SmartImage].
-enum SmartImageLoadingType {
+/// Loading animation styles supported by [EasyImage].
+enum EasyImageLoadingType {
   /// No special animated loading style; shows standard placeholder.
   none,
 
@@ -15,3 +15,6 @@ enum SmartImageLoadingType {
   /// Blur-up progressive loading (low-res preview or BlurHash).
   blurUp,
 }
+
+/// Backwards compatibility alias for [EasyImageLoadingType].
+typedef SmartImageLoadingType = EasyImageLoadingType;

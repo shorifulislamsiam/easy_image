@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../enums/smart_image_format.dart';
-import '../models/smart_image_source.dart';
+import '../enums/easy_image_format.dart';
+import '../models/easy_image_source.dart';
 import '../utils/file_image_helper.dart';
 
 /// Renders decoded image data according to its format (Raster vs SVG) with optional fade-in.
-class SmartImageRenderer extends StatefulWidget {
+class EasyImageRenderer extends StatefulWidget {
   final ResolvedImageSource source;
   final Uint8List? bytes;
-  final SmartImageFormat format;
+  final EasyImageFormat format;
   final double? width;
   final double? height;
   final BoxFit fit;
@@ -22,7 +22,7 @@ class SmartImageRenderer extends StatefulWidget {
   final bool fadeIn;
   final Duration fadeDuration;
 
-  const SmartImageRenderer({
+  const EasyImageRenderer({
     super.key,
     required this.source,
     this.bytes,
@@ -41,10 +41,10 @@ class SmartImageRenderer extends StatefulWidget {
   });
 
   @override
-  State<SmartImageRenderer> createState() => _SmartImageRendererState();
+  State<EasyImageRenderer> createState() => _EasyImageRendererState();
 }
 
-class _SmartImageRendererState extends State<SmartImageRenderer>
+class _EasyImageRendererState extends State<EasyImageRenderer>
     with SingleTickerProviderStateMixin {
   late final AnimationController _fadeController;
   late final Animation<double> _fadeAnimation;
@@ -69,7 +69,7 @@ class _SmartImageRendererState extends State<SmartImageRenderer>
   }
 
   @override
-  void didUpdateWidget(covariant SmartImageRenderer oldWidget) {
+  void didUpdateWidget(covariant EasyImageRenderer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.fadeDuration != widget.fadeDuration) {
       _fadeController.duration = widget.fadeDuration;
@@ -113,7 +113,7 @@ class _SmartImageRendererState extends State<SmartImageRenderer>
 
   Widget _buildImage(BuildContext context) {
     // 1. Vector SVG rendering
-    if (widget.format == SmartImageFormat.svg) {
+    if (widget.format == EasyImageFormat.svg) {
       return _buildSvg(context);
     }
 
@@ -140,7 +140,7 @@ class _SmartImageRendererState extends State<SmartImageRenderer>
       );
     }
 
-    if (widget.source.type == SmartImageSourceType.asset &&
+    if (widget.source.type == EasyImageSourceType.asset &&
         widget.source.stringData != null) {
       return SvgPicture.asset(
         widget.source.stringData!,
@@ -160,10 +160,10 @@ class _SmartImageRendererState extends State<SmartImageRenderer>
 
     if (widget.bytes != null && widget.bytes!.isNotEmpty) {
       imageProvider = MemoryImage(widget.bytes!);
-    } else if (widget.source.type == SmartImageSourceType.asset &&
+    } else if (widget.source.type == EasyImageSourceType.asset &&
         widget.source.stringData != null) {
       imageProvider = AssetImage(widget.source.stringData!);
-    } else if (widget.source.type == SmartImageSourceType.file &&
+    } else if (widget.source.type == EasyImageSourceType.file &&
         widget.source.stringData != null) {
       imageProvider = getFileImageProvider(widget.source.stringData!);
     } else if (widget.source.byteData != null) {
@@ -194,3 +194,6 @@ class _SmartImageRendererState extends State<SmartImageRenderer>
     );
   }
 }
+
+/// Backwards compatibility alias for [EasyImageRenderer].
+typedef SmartImageRenderer = EasyImageRenderer;

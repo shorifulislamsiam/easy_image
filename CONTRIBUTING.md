@@ -1,6 +1,6 @@
-# Contributing to Smart Image
+# Contributing to Easy Image
 
-Thank you for your interest in contributing to `smart_image`!
+Thank you for your interest in contributing to `easy_image`!
 
 ## Code of Conduct
 
@@ -29,4 +29,4 @@ Please be polite, respectful, and collaborative.
 - Code should be clean, properly typed, and documented.
 - Add unit or widget tests covering any new features or bug fixes.
 - Update `CHANGELOG.md` with a summary of your changes under the unreleased or upcoming release section.
-- Respect the phased architecture and avoid breaking existing public APIs without deprecation notices.
+- Avoid breaking existing public APIs without deprecation notices.

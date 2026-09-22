@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/smart_image.dart';
+import 'package:easy_image/easy_image.dart';
 
 void main() {
   group('ImageDownloadQueue Concurrency Limiter', () {
@@ -60,7 +60,7 @@ void main() {
       isCancelled = true;
 
       expect(await t1, 't1');
-      await expectLater(t2, throwsA(isA<SmartImageException>()));
+      await expectLater(t2, throwsA(isA<EasyImageException>()));
     });
   });
 }

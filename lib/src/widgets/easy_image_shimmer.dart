@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// A customizable shimmer effect widget that respects the user's reduced-motion setting.
-class SmartImageShimmer extends StatefulWidget {
+class EasyImageShimmer extends StatefulWidget {
   final double? width;
   final double? height;
   final BorderRadius? borderRadius;
@@ -9,7 +9,7 @@ class SmartImageShimmer extends StatefulWidget {
   final Color highlightColor;
   final Duration duration;
 
-  const SmartImageShimmer({
+  const EasyImageShimmer({
     super.key,
     this.width,
     this.height,
@@ -20,10 +20,10 @@ class SmartImageShimmer extends StatefulWidget {
   });
 
   @override
-  State<SmartImageShimmer> createState() => _SmartImageShimmerState();
+  State<EasyImageShimmer> createState() => _EasyImageShimmerState();
 }
 
-class _SmartImageShimmerState extends State<SmartImageShimmer>
+class _EasyImageShimmerState extends State<EasyImageShimmer>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
@@ -35,7 +35,7 @@ class _SmartImageShimmerState extends State<SmartImageShimmer>
   }
 
   @override
-  void didUpdateWidget(covariant SmartImageShimmer oldWidget) {
+  void didUpdateWidget(covariant EasyImageShimmer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.duration != widget.duration) {
       _controller.duration = widget.duration;
@@ -95,3 +95,6 @@ class _SmartImageShimmerState extends State<SmartImageShimmer>
     );
   }
 }
+
+/// Backwards compatibility alias for [EasyImageShimmer].
+typedef SmartImageShimmer = EasyImageShimmer;

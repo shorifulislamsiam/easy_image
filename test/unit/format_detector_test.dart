@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:easy_image/src/enums/smart_image_format.dart';
+import 'package:easy_image/src/enums/easy_image_format.dart';
 import 'package:easy_image/src/services/image_format_detector.dart';
 
 void main() {
@@ -20,10 +20,10 @@ void main() {
         0x00,
       ]);
       expect(
-          ImageFormatDetector.detectFromBytes(pngBytes), SmartImageFormat.png);
+          ImageFormatDetector.detectFromBytes(pngBytes), EasyImageFormat.png);
       expect(
         ImageFormatDetector.detect(bytes: pngBytes),
-        SmartImageFormat.png,
+        EasyImageFormat.png,
       );
     });
 
@@ -37,10 +37,10 @@ void main() {
         0x10,
       ]);
       expect(ImageFormatDetector.detectFromBytes(jpegBytes),
-          SmartImageFormat.jpeg);
+          EasyImageFormat.jpeg);
       expect(
         ImageFormatDetector.detect(bytes: jpegBytes),
-        SmartImageFormat.jpeg,
+        EasyImageFormat.jpeg,
       );
     });
 
@@ -51,10 +51,10 @@ void main() {
         0x57, 0x45, 0x42, 0x50, // WEBP
       ]);
       expect(ImageFormatDetector.detectFromBytes(webpBytes),
-          SmartImageFormat.webp);
+          EasyImageFormat.webp);
       expect(
         ImageFormatDetector.detect(bytes: webpBytes),
-        SmartImageFormat.webp,
+        EasyImageFormat.webp,
       );
     });
 
@@ -76,9 +76,9 @@ void main() {
         0x61,
       ]);
       expect(ImageFormatDetector.detectFromBytes(gif87Bytes),
-          SmartImageFormat.gif);
+          EasyImageFormat.gif);
       expect(ImageFormatDetector.detectFromBytes(gif89Bytes),
-          SmartImageFormat.gif);
+          EasyImageFormat.gif);
     });
 
     test('detects BMP from magic bytes', () {
@@ -89,7 +89,7 @@ void main() {
         0x00,
       ]);
       expect(
-          ImageFormatDetector.detectFromBytes(bmpBytes), SmartImageFormat.bmp);
+          ImageFormatDetector.detectFromBytes(bmpBytes), EasyImageFormat.bmp);
     });
 
     test('detects SVG from XML text bytes', () {
@@ -100,19 +100,19 @@ void main() {
         utf8.encode('<?xml version="1.0"?><svg width="100"></svg>'),
       );
       expect(
-          ImageFormatDetector.detectFromBytes(svgBytes), SmartImageFormat.svg);
+          ImageFormatDetector.detectFromBytes(svgBytes), EasyImageFormat.svg);
       expect(ImageFormatDetector.detectFromBytes(xmlSvgBytes),
-          SmartImageFormat.svg);
+          EasyImageFormat.svg);
     });
 
     test('prioritizes Content-Type header when valid', () {
       expect(
         ImageFormatDetector.detect(contentType: 'image/svg+xml'),
-        SmartImageFormat.svg,
+        EasyImageFormat.svg,
       );
       expect(
         ImageFormatDetector.detect(contentType: 'image/png; charset=utf-8'),
-        SmartImageFormat.png,
+        EasyImageFormat.png,
       );
     });
 
@@ -133,7 +133,7 @@ void main() {
           contentType: 'application/octet-stream',
           bytes: pngBytes,
         ),
-        SmartImageFormat.png,
+        EasyImageFormat.png,
       );
     });
 
@@ -141,15 +141,15 @@ void main() {
       expect(
         ImageFormatDetector.detect(
             pathOrUrl: 'https://example.com/photo.jpg?v=1'),
-        SmartImageFormat.jpeg,
+        EasyImageFormat.jpeg,
       );
       expect(
         ImageFormatDetector.detect(pathOrUrl: 'assets/icon.svg#layer1'),
-        SmartImageFormat.svg,
+        EasyImageFormat.svg,
       );
       expect(
         ImageFormatDetector.detect(pathOrUrl: '/var/data/image.webp'),
-        SmartImageFormat.webp,
+        EasyImageFormat.webp,
       );
     });
   });
