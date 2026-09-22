@@ -1,0 +1,32 @@
+name: easy_image
+description: A production-ready Flutter package providing a unified widget for image loading, caching, retry, multi-format rendering, and error handling.
+version: 1.0.0
+homepage: https://github.com/flutter_packages/easy_image
+repository: https://github.com/flutter_packages/easy_image
+issue_tracker: https://github.com/flutter_packages/easy_image/issues
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.17
+  path_provider: ^2.1.5
+  http: ^1.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
