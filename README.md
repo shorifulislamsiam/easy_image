@@ -2,7 +2,7 @@
 
 A production-ready Flutter package providing a unified widget for displaying images with built-in two-tier caching, HTTP 304 revalidation, LRU eviction, BlurHash progressive loading, CDN transformations, concurrency limiting, loading shimmer, error retry with backoff, local file/asset/memory support, and first-class SVG rendering.
 
-[![CI](https://github.com/flutter_packages/easy_image/actions/workflows/ci.yml/badge.svg)](https://github.com/flutter_packages/easy_image/actions/workflows/ci.yml)
+[![CI](https://github.com/shorifulislamsiam/easy_image/actions/workflows/ci.yml/badge.svg)](https://github.com/shorifulislamsiam/easy_image/actions/workflows/ci.yml)
 [![pub package](https://img.shields.io/badge/pub.dev-1.0.0-blue.svg)](https://pub.dev/packages/easy_image)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
